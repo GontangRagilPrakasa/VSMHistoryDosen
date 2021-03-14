@@ -1,0 +1,209 @@
+.blockUI-ajax-loading{
+	background-image: url(../img/loading-ajax.gif);
+	margin-right: 9px;
+	height: 30px;
+	width: 30px;
+	float: left;
+}
+
+.blockUI-ajax-loading-small{
+	background-repeat:no-repeat;
+	background-position: center center;
+	background-image: url(../img/loading-ajax-small.gif);
+	height: 24px;
+	width: 24px;
+}
+
+.blockUI-text-loading{
+	margin-top: 4px;
+	font-size: 16px;
+}
+
+.alert{
+	padding: 0px;
+	margin-bottom: 15px;
+}
+
+#mainAlert > .alert{
+	margin-bottom: 5px;	
+}
+
+.alert-header{
+	border-bottom: 1px solid #F2BDBD;
+	padding: 8px 8px 6px;
+	text-align: left;
+}
+
+.alert-content{
+	padding: 5px 9px;
+	text-align: left;
+	max-height: 90px;
+	overflow-y: auto;
+	width: 100%;
+}
+
+.alert-dismissable .close, .alert-dismissible .close{
+	position: inherit;
+	right: 0px;
+	top: 0px;
+}
+
+.alert .icon{
+	margin-right: 5px;
+}
+
+.alert a{
+	text-decoration: none;
+}
+
+.alert a:hover{
+	color: #333;
+	text-decoration: underline;
+}
+
+.btn-remove{
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #eff3f6;
+    border: 1px solid transparent;
+    border-radius: 5px;		
+	display: inline-block;
+	position: absolute;
+	top: 5px;
+	left: 5px;
+}
+
+.btn-remove:hover,
+.btn-remove:focus,
+.btn-remove:active
+{
+    color: #eff3f6;
+    outline: 0 !important;
+}
+
+.btn-remove i
+{
+    margin-right: 5px;
+}
+
+
+.form-top-table .group-input {
+	display: inline-table;
+}
+
+.button.button--approve {
+  background-color: #28a745;
+  color: #fff;
+  text-decoration: none;
+}
+
+.button.button--cancel {
+  background-color: #F6303E;
+  color: #fff;
+  text-decoration: none;
+}
+
+.item-status-canceled {
+  background-color: #F6303E;
+  color: #fff;
+}
+
+.modal-lg {
+  max-width: 900px;
+}
+@media (min-width: 620px) {
+  .modal-lg {
+    margin-right: 10px;
+    margin-left: 10px;
+  }
+}
+@media (min-width: 920px) {
+  .modal-lg {
+    margin-right: auto;
+    margin-left: auto;
+  }
+}
+
+.col-form-value {
+	display: block;
+	width: 100%;
+	border-bottom: 1px solid #979797;
+	padding: 6px 0px;
+}
+
+.col-form-value:empty:before {
+	content: "\00a0 ";
+}
+
+.delete-item {
+	display: inline-block;
+}
+
+form.form {
+	width: 100%;
+}
+
+table.table .cell-action {
+	text-align: center;
+	vertical-align: middle;
+	padding: 0px;
+	
+}
+
+.modal-footer {
+	padding: 10px 15px;	
+}
+
+.modal-footer > button {
+	min-width: 100px;
+}
+
+.form-group{
+	margin-bottom: 7px;
+}
+
+.form-horizontal .control-label{
+	text-align: left;
+	padding-right: 0px;
+}
+
+.form-horizontal > .form-group > label + div::before{
+	clear: both;
+}
+
+.form-label-separator{
+	float: right;
+	text-align: right;
+	position: relative;
+	right: -10px;
+}
+
+.form-label-separator::before{
+	content: ":";
+}
+
+label {
+	font-weight: normal;
+}
+
+.select2-container .select2-selection--single .select2-selection__rendered {
+	margin-top: 0px;
+}
+
+.select2-container--bootstrap.select2-container--focus .select2-selection, .select2-container--bootstrap.select2-container--open .select2-selection {
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.select2-container--bootstrap .select2-selection {
+	border-radius: 0px;
+}
+
+.select2-container--bootstrap .select2-selection {
+	box-shadow: none;
+}
+
+.navbar-nav>.user-menu>.dropdown-menu>li.user-header {
+	height: auto;
+}
