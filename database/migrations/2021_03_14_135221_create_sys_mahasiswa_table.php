@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAlPeriode extends Migration
+class CreateSysMahasiswaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateAlPeriode extends Migration
      */
     public function up()
     {
-        Schema::create('al_periode', function (Blueprint $table) {
-            $table->bigIncrements('periode_id');
-            $table->char('desa', 10);
-            $table->string('tahun');
-            $table->date('start_date');
-            $table->date('end_date');
+        Schema::create('sys_mahasiswa', function (Blueprint $table) {
+            $table->bigIncrements('mahasiswa_id');
+            $table->unsignedBigInteger('users_id');
+            $table->string('mahasiswa_name');
+            $table->string('mahasiswa_jk');
+            $table->string('mahasiswa_telp');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ class CreateAlPeriode extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('al_periode');
+        Schema::dropIfExists('sys_mahasiwa');
     }
 }

@@ -45,7 +45,7 @@ class LoginController extends Controller
             $redirect = url('/dashboard');
             if (session()->has('from')) {
 				$redirect = session()->pull('from');
-				if ($redirect == url('/login')) {
+				if ($redirect == url('/')) {
 					$redirect = url('/dashboard');
 				}
 			}
@@ -63,7 +63,7 @@ class LoginController extends Controller
     }
 	
 	public function logout() {
-		$url = 'login';
+		$url = '/';
 		Auth::logout();
 		session()->flush();
 		return redirect($url);

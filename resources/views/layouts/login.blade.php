@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="csrf-token" content="{{ csrf_token() }}">
-		<title>SID NTB - @yield('title')</title>
+		<title>Skripsi - @yield('title')</title>
 		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 		<link rel="stylesheet" href="{{ asset('plugins/bootstrap/css/bootstrap.min.css', ENV('SSL_FLAG')) }}">
 		<link rel="stylesheet" href="{{ asset('plugins/font-awesome/css/font-awesome.min.css', ENV('SSL_FLAG')) }}">
@@ -18,7 +18,7 @@
 	<body class="hold-transition login-page">
 		<div class="login-box">
 			<div class="login-logo">
-				<a href=""><b>SID</b> NTB.</a>
+				<a href=""><b>Penentuan</b> Vector Space Model.</a>
 			</div>
 			<div class="login-box-body main-content">
 				<div id="mainAlert" style="display: none;"></div>

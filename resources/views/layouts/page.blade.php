@@ -5,7 +5,7 @@
   	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="csrf-token" content="{{ csrf_token() }}">
-	<title>SID NTB - @yield('title')</title>
+	<title>Vector Space Model - @yield('title')</title>
 
 	<!-- Favicons -->
 	<link rel="stylesheet" href="{{ asset('web/img/favicon.png') }}" rel="icon">
@@ -49,7 +49,7 @@
 	<!-- ======= Header ======= -->
 	<header id="header" class="fixed-top">
 		<div class="container d-flex align-items-center">
-		  	<h1 class="logo mr-auto"><a href="{{ url('/') }}">SID <span>NTB.</span></a></h1>
+		  	<h1 class="logo mr-auto"><a href="{{ url('/') }}">Penentuan <span>Vector Space Model.</span></a></h1>
 			<!-- Uncomment below if you prefer to use an image logo -->
 			 <!-- <a href="index.html" class="logo mr-auto"><img src="assets/img/logo.png" alt=""></a> -->
 
@@ -78,7 +78,7 @@
 				<div class="row">
 
 					<div class="col-lg-4 col-md-6 footer-contact">
-						<h3>SID NTB<span>.</span></h3>
+						<h3>Dosen<span>.</span></h3>
 						<p>
 						Jalan in aja yuk <br>
 						Nusa Tenggara Barat, +62 535022<br>

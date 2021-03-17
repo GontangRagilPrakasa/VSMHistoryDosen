@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOptPositionTable extends Migration
+class CreateMstDosenJudulTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,11 @@ class CreateOptPositionTable extends Migration
      */
     public function up()
     {
-        Schema::create('opt_position', function (Blueprint $table) {
-            $table->bigIncrements('position_id');
-            $table->string('position_name');
+        Schema::create('mst_dosen_judul', function (Blueprint $table) {
+            $table->bigIncrements('dosen_judul_id');
+            $table->unsignedBigInteger('dosen_id');
+            $table->text('dosen_judul');
+            $table->text('dosen_judul_processing');
             $table->timestamps();
         });
     }
@@ -27,6 +29,6 @@ class CreateOptPositionTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('opt_position');
+        Schema::dropIfExists('mst_dosen_judul');
     }
 }

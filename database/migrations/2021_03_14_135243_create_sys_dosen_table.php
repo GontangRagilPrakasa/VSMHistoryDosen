@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOptIdmTable extends Migration
+class CreateSysDosenTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,12 @@ class CreateOptIdmTable extends Migration
      */
     public function up()
     {
-        Schema::create('opt_idm_status', function (Blueprint $table) {
-            $table->bigIncrements('idm_status_id');
-            $table->string('idm_status_name');
+        Schema::create('sys_dosen', function (Blueprint $table) {
+            $table->bigIncrements('dosen_id');
+            $table->unsignedBigInteger('users_id');
+            $table->string('dosen_name');
+            $table->string('dosen_jk');
+            $table->string('dosen_telp');
             $table->timestamps();
         });
     }
@@ -27,6 +30,6 @@ class CreateOptIdmTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('opt_idm_status');
+        Schema::dropIfExists('sys_dosen');
     }
 }

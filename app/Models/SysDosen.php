@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SysAdmin extends Model
+class SysDosen extends Model
 {
- 	protected $table = "sys_admin";
-	protected $primaryKey = "admin_id";
+ 	protected $table = "sys_dosen";
+	protected $primaryKey = "dosen_id";
 	public $incrementing = true;
 }

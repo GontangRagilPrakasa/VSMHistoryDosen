@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="csrf-token" content="{{ csrf_token() }}">
-		<title>SID NTB - @yield('title')</title>
+		<title>VSM - @yield('title')</title>
 		<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 		<link rel="stylesheet" href="{{ asset('plugins/bootstrap/css/bootstrap.min.css', ENV('SSL_FLAG')) }}">
 		<link rel="stylesheet" href="{{ asset('plugins/font-awesome/css/font-awesome.min.css', ENV('SSL_FLAG')) }}">
@@ -28,7 +28,7 @@
 				<a href="{{ url('/') }}" class="logo">
 					<span class="logo-mini"><b>X</b></span>
 					<span class="logo-lg">
-						<b>SID</b>
+						<b>Vector Space Model</b>
 					</span>
 				</a>
 				<nav class="navbar navbar-static-top">
@@ -86,7 +86,7 @@
 				<div class="pull-right hidden-xs">
 					<b>Version</b> 1.0
 				</div>
-				<strong>Copyright &copy; <?php date('Y') ?> <a href="#">SID</a>.</strong> All rights reserved.
+				<strong>Copyright &copy; <?php date('Y') ?> <a href="#"></a>.</strong> All rights reserved.
 			</footer>
 		</div>
 		<script src="{{ asset('plugins/jquery/jquery.min.js', ENV('SSL_FLAG')) }}"></script>

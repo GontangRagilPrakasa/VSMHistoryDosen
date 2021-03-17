@@ -22,8 +22,12 @@ class RolesTableSeeder extends Seeder
                 'role_name' => 'Super Admin',
             ],
             [
-                'role_id' => 5,
-                'role_name' => 'Admin Desa',
+                'role_id' => 2,
+                'role_name' => 'Dosen',
+            ],
+            [
+                'role_id' => 3,
+                'role_name' => 'Mahasiswa',
             ],
         ];
 
