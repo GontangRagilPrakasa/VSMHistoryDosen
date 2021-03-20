@@ -27,6 +27,7 @@ Route::group(['prefix' => ''], function() {
 		Route::get('/logout', 'LoginController@logout');
 		// Start
 		Route::get('/dashboard', 'DashboardController@index');
+		Route::post('/search', 'DashboardController@search');
 		// Route::get('/change-password', 'ProfileController@index');
 		// Route::post('/change-password', 'ProfileController@update');
 
@@ -35,16 +36,26 @@ Route::group(['prefix' => ''], function() {
 				Route::group(['prefix' => 'dosen'], function(){
 				Route::get('/penelitian', 'Dosen\DosenController@penelitian');
 				Route::post('/list-penelitian', 'Dosen\DosenController@listPenelitian');
+				Route::get('/list-penelitian-tambah', 'Dosen\DosenController@listPenelitianTambah');
+				Route::post('/list-penelitian-show', 'Dosen\DosenController@listPenelitianShow');
+				Route::post('/list-penelitian-save', 'Dosen\DosenController@listPenelitianSave');
+				Route::post('/list-penelitian-edit', 'Dosen\DosenController@listPenelitianEdit');
 				Route::get('/mahasiswa', 'Dosen\DosenController@mahasiswa');
 				Route::post('/list-mahasiswa', 'Dosen\DosenController@listMahasiswa');
+				Route::post('/list-save-mahasiswa', 'Dosen\DosenController@listSaveMahasiswa');
 			});
 		});
 		
 		/* Check role Admin */
 		Route::group(['middleware' => 'check.role:3'], function () {
 			Route::group(['prefix' => 'mahasiswa'], function(){
+				Route::get('/profile', 'Mahasiswa\MahasiswaController@profil');
+				Route::post('/profile-save', 'Mahasiswa\MahasiswaController@profilSave');
 				Route::get('/skripsi-form', 'Mahasiswa\MahasiswaController@skripsiForm');
 				Route::post('/list-skripsi-form', 'Mahasiswa\MahasiswaController@listskripsiForm');
+
+				Route::post('/pengajuan-skripsi', 'Mahasiswa\MahasiswaController@pengajuanSkripsi');
+				Route::post('/pengajuan-batal-skripsi', 'Mahasiswa\MahasiswaController@pengajuanBatalskripsi');
 			});
 		});	
 	});

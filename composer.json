@@ -12,10 +12,10 @@
         "aws/aws-sdk-php": "^3.135",
         "barryvdh/laravel-dompdf": "^0.8.6",
         "fideloper/proxy": "^4.0",
+        "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "6.2.*",
         "laravel/tinker": "^2.0",
-        "maatwebsite/excel": "^3.1",
-        "guzzlehttp/guzzle": "~6.0"
+        "maatwebsite/excel": "^3.1"
     },
     "require-dev": {
         "facade/ignition": "^1.4",

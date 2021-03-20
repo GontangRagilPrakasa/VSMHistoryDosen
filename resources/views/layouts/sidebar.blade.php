@@ -41,6 +41,12 @@
         <!-- driver seller eks -->
 		@if(in_array(Auth::User()->role, [3]))
             <li class="{{ ($controller=='MahasiswaController'?'active':'') }}">
+                <a href="{{ url('mahasiswa/profile') }}">
+                    <i class="fa fa-archive"></i> <span>Profil Diri</span>
+                </a>
+            </li>
+
+            <li class="{{ ($controller=='MahasiswaController'?'active':'') }}">
                 <a href="{{ url('mahasiswa/skripsi-form') }}">
                     <i class="fa fa-archive"></i> <span>Form Ajuan Skripsi</span>
                 </a>

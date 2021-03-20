@@ -21,11 +21,7 @@ div.dt-buttons{
         info: false,
         responsive: true,
         buttons: [
-            // {
-            //     text:      '<i class="fa fa-file-excel-o"></i> Export to Excel',
-            //     titleAttr: 'Excel',
-            //     extend: 'excelHtml5'
-            // }
+  
         ],
         ajax: {
             url: '{{ url("dosen/list-mahasiswa") }}',
@@ -65,8 +61,10 @@ div.dt-buttons{
             { data: "judul_id", name: "judul_id", orderable: false, 
                 render: function(data, type, row, meta){
                     var elShow = '<a class="btn btn-sm btn-default" href="javascript: editData(\''+row.judul_id+'\');"><i class="fa fa-eye"></i></a>';
-                    return '<div class="btn-group">\
+                    var elDelete = '<a class="btn btn-sm btn-default" href="javascript: deleteData(\''+row.judul_id+'\');"><i class="fa fa-trash"></i></a>';
+					return '<div class="btn-group">\
 							'+elShow+'\
+							'+elDelete+'\
 						</div>';
                 } 			
             },
@@ -95,7 +93,7 @@ div.dt-buttons{
 			type: 'POST',
 			headers: {'X-CSRF-TOKEN': csrfToken},
             data: formData,
-			url : "{{ url('admin/desa-dana/update') }}", 
+			url : "{{ url('dosen/list-save-mahasiswa') }}", 
             contentType: false,
             processData: false,   
             cache: false,
@@ -104,7 +102,7 @@ div.dt-buttons{
 			success : function(ret){
 				if (ret.result == true) {
 					$('#dlgData').modal('hide');
-					alertBox('show', {msg: 'Data berhasil disimpan', mode: 'success'});
+					alertBox('show', {msg: 'Data berhasil disesuaikan', mode: 'success'});
 					table.draw();
 				} else {
 					alertBox('show', {msg: ret.msg, selectorAlert: '#alertData'});
@@ -113,26 +111,32 @@ div.dt-buttons{
 		});
 	});
 
-    function editData(periode_id){
-        postData = new Object();
-		postData.periode_id = periode_id;
-		ajax({
-			url : "{{ url('admin/desa-dana/show') }}", 
-			postData : postData,
-			success : function(ret){
-				$('#dlgData').modal('show');
-				var data = ret.data;
-				console.log(data);
-				$( "#desa-result" ).html(data.desa);
-
-                $('#dana_id').val(data.dana_id);
-                $('#periode_id').val(data.id);
-				$('#dana_masuk').val(data.dana_masuk);
-				$('#musdes').val(data.musdes);
-
-            }
-		});
+    function editData(judul_id){
+		$('#dlgData').modal('show');
+		$('.areyousure').html('Apakah anda sudah yakin, ingin membimbing mahasiswa tersebut?');
+		$('#mode').val('edit');
+		$('#judul_id').val(judul_id);
     }
+
+	function deleteData(judul_id){
+		$('#dlgData').modal('show');
+		$('.areyousure').html('Apakah anda sudah yakin, ingin membatalkan mahasiswa tersebut?');
+		$('#mode').val('delete');
+		$('#judul_id').val(judul_id);
+    }
+
+	
+
+	$('.datepicker').datepicker({
+        changeMonth: false,
+        changeYear: true,
+        showButtonPanel: true,
+        yearRange: '1950:2013', // Optional Year Range
+        dateFormat: 'yy',
+        onClose: function(dateText, inst) {
+            var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+            $(this).datepicker('setDate', new Date(year, 0, 1));
+    }});
 
     $('#filter_search').click(function(e){
         table.draw();
@@ -154,24 +158,6 @@ div.dt-buttons{
 @section('content')
 <div class="row">
 	<div class="row col-md-12">
-		<div class="">
-			<div class="col-md-12">
-				<button id="btnAdd" class="btn btn-default">Tambah Judul Penelitian</button>
-			</div>
-		</div>
-		<br><br>
-		@if (Session::has('msg'))
-		<div class="">
-			<div class="col-md-12 ">  
-				<div class="alert alert-danger alert-dismissible fade in">
-					<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-					<strong>Peringatan!</strong> {!! Session::get("msg") !!} <strong>Silahkan menggunakan format yang benar!</strong>
-				</div>
-			</div>
-		</div>
-		@endif
-		
-		<br><br>
 		<div class="row">
 			<div class="col-md-12">
 				<div class="col-md-9">
@@ -210,34 +196,29 @@ div.dt-buttons{
 </div>
 
 <div id="dlgData" class="modal fade">
-	<div class="modal-dialog modal-lg">
+	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title">Data Dana Desa <b id="desa-result"></b></h4>
+				<h4 class="modal-title">Konfirmasi?</h4>
 			</div>
-
-			<form class="form-horizontal" id="frmData" onSubmit="return false" method="post" enctype="multipart/form-data" action="#">
-			@csrf
-				<div class="modal-body">
+			<div class="modal-body">
+                <p class="areyousure"></p>
+                <p class="debug-url"></p>
+                <center>
+					<br>
+                	<div class="loader" style="display: none"></div>
+                </center>
+            </div>
+            <div class="modal-footer">
+            	<form class="form-horizontal" id="frmData" onSubmit="return false" method="post" enctype="multipart/form-data" action="#">
 					<div id="alertData" style="display: none;"></div>
-					<input type="hidden" name="mode" value="edit" id="mode">
-					<input type="hidden" name="dana_id" id="dana_id">
-                    <input type="hidden" name="periode_id" id="periode_id">
-
-					<div class="form-group">
-						<label class="col-sm-3 control-label" for="dana_masuk">Judul Penelitian </label>
-						<div class="col-sm-9">
-							<input type="text" class="form-control rupiah" id="dana_masuk" name="dana_masuk" required="" value="">
-						</div>
-					</div>
-				</div>
-					
-					
-				<div class="modal-footer">
-					<button type="submit" class="btn btn-default" id="save-data">Save</button>
-				</div>
-			</form>
+					@csrf
+					<input type="hidden" name="mode" value="" id="mode">
+					<input type="hidden" name="judul_id" value="" id="judul_id">
+					<button type="submit" class="btn btn-success submit-approval" id="save-data">Save</button>
+				</form>
+			</div>
 		</div>
 	</div>
 </div>

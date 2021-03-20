@@ -86,46 +86,18 @@ div.dt-buttons{
         },			
     });
 
-    $('#frmData').submit(function(){
-		var formData = new FormData($('#frmData')[0]);
-		$.ajax({
-			type: 'POST',
-			headers: {'X-CSRF-TOKEN': csrfToken},
-            data: formData,
-			url : "{{ url('admin/desa-dana/update') }}", 
-            contentType: false,
-            processData: false,   
-            cache: false,
-			selectorBlock: '#dlgData .modal-content',
-			selectorAlert: '#alertData',
-			success : function(ret){
-				if (ret.result == true) {
-					$('#dlgData').modal('hide');
-					alertBox('show', {msg: 'Data berhasil disimpan', mode: 'success'});
-					table.draw();
-				} else {
-					alertBox('show', {msg: ret.msg, selectorAlert: '#alertData'});
-				}
-			},
-		});
-	});
-
-    function editData(periode_id){
+    function editData(dosen_judul_id){
         postData = new Object();
-		postData.periode_id = periode_id;
+		postData.dosen_judul_id = dosen_judul_id;
 		ajax({
-			url : "{{ url('admin/desa-dana/show') }}", 
+			url : "{{ url('dosen/list-penelitian-show') }}", 
 			postData : postData,
 			success : function(ret){
 				$('#dlgData').modal('show');
 				var data = ret.data;
-				console.log(data);
-				$( "#desa-result" ).html(data.desa);
 
-                $('#dana_id').val(data.dana_id);
-                $('#periode_id').val(data.id);
-				$('#dana_masuk').val(data.dana_masuk);
-				$('#musdes').val(data.musdes);
+                $('#dosen_judul_id').val(data.dosen_judul_id);
+                $('#dosen_judul').val(data.dosen_judul);
 
             }
 		});
@@ -142,6 +114,30 @@ div.dt-buttons{
 		$('#addData').modal('show');
 	});
 
+	$('#frmData').submit(function(){
+		var formData = new FormData($('#frmData')[0]);
+		$.ajax({
+			type: 'POST',
+			headers: {'X-CSRF-TOKEN': csrfToken},
+            data: formData,
+			url : "{{ url('dosen/list-penelitian-edit') }}",
+            contentType: false,
+            processData: false,
+            cache: false,
+			selectorBlock: '#dlgData .modal-content',
+			selectorAlert: '#alertData',
+			success : function(ret){
+				if (ret.result == true) {
+					$('#dlgData').modal('hide');
+					alertBox('show', {msg: 'Data berhasil disimpan', mode: 'success'});
+					table.draw();
+				} else {
+					alertBox('show', {msg: ret.msg, selectorAlert: '#alertData'});
+				}
+			},
+		});
+	});
+
 
 
 
@@ -153,7 +149,7 @@ div.dt-buttons{
 	<div class="row col-md-12">
 		<div class="">
 			<div class="col-md-12">
-				<button id="btnAdd" class="btn btn-default">Tambah Judul Penelitian</button>
+				<a href="{{ url('dosen/list-penelitian-tambah') }}" class="btn btn-default">Tambah Judul Penelitian</a>
 			</div>
 		</div>
 		<br><br>
@@ -216,13 +212,12 @@ div.dt-buttons{
 				<div class="modal-body">
 					<div id="alertData" style="display: none;"></div>
 					<input type="hidden" name="mode" value="edit" id="mode">
-					<input type="hidden" name="dana_id" id="dana_id">
-                    <input type="hidden" name="periode_id" id="periode_id">
+                    <input type="hidden" name="dosen_judul_id" id="dosen_judul_id">
 
 					<div class="form-group">
-						<label class="col-sm-3 control-label" for="dana_masuk">Judul Penelitian </label>
+						<label class="col-sm-3 control-label" for="dosen_judul">Judul Penelitian </label>
 						<div class="col-sm-9">
-							<input type="text" class="form-control rupiah" id="dana_masuk" name="dana_masuk" required="" value="">
+							<input type="text" class="form-control rupiah" id="dosen_judul" name="dosen_judul" required="" value="">
 						</div>
 					</div>
 				</div>
