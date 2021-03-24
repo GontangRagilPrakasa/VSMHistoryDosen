@@ -32,6 +32,23 @@ Route::group(['prefix' => ''], function() {
 		// Route::post('/change-password', 'ProfileController@update');
 
 		/* Check role Super Admin */
+		Route::group(['middleware' => 'check.role:1'], function () {
+			Route::group(['prefix' => 'admin'], function(){
+				Route::get('/dosen-list', 'MasterController@adminDosenList');
+				Route::post('/dosen-show', 'MasterController@adminDosenList');
+				Route::post('/dosen-tambah', 'MasterController@adminDosenTambah');
+				Route::post('/dosen-edit', 'MasterController@adminDosenEdit');
+				Route::post('/dosen-delete', 'DosenController@adminDosenDelete');
+
+
+				Route::get('/mahasiswa-list', 'MasterController@adminMahasiswaList');
+				Route::post('/mahasiswa-show', 'MasterController@adminMahasiswaList');
+				Route::post('/mahasiswa-tambah', 'MasterController@adminMahasiswaTambah');
+				Route::post('/mahasiswa-edit', 'MasterController@adminMahasiswaEdit');
+				Route::post('/mahasiswa-delete', 'MasterController@adminMahasiswaDelete');
+			});
+			
+		});
 		Route::group(['middleware' => 'check.role:2'], function () {
 				Route::group(['prefix' => 'dosen'], function(){
 				Route::get('/penelitian', 'Dosen\DosenController@penelitian');

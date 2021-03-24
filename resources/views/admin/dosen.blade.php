@@ -28,7 +28,7 @@ div.dt-buttons{
             // }
         ],
         ajax: {
-            url: '{{ url("dosen/list-penelitian") }}',
+            url: '{{ url("admin/dosen-list") }}',
             beforeSend	: function(xhr){ 
                 xhr.setRequestHeader("X-CSRF-TOKEN", $('meta[name="csrf-token"]').attr('content'));
             },
@@ -70,7 +70,7 @@ div.dt-buttons{
         ],
         columnDefs: [
             {
-                targets: [1], 
+                targets: [1,2,3,4], 
                 className: 'text-center',
             }
         ],
@@ -90,7 +90,7 @@ div.dt-buttons{
         postData = new Object();
 		postData.dosen_judul_id = dosen_judul_id;
 		ajax({
-			url : "{{ url('dosen/list-penelitian-show') }}", 
+			url : "{{ url('admin/dosen-show') }}", 
 			postData : postData,
 			success : function(ret){
 				$('#dlgData').modal('show');
@@ -120,7 +120,7 @@ div.dt-buttons{
 			type: 'POST',
 			headers: {'X-CSRF-TOKEN': csrfToken},
             data: formData,
-			url : "{{ url('dosen/list-penelitian-edit') }}",
+			url : "{{ url('admin/dosen-tambah') }}",
             contentType: false,
             processData: false,
             cache: false,
@@ -189,7 +189,9 @@ div.dt-buttons{
 			<thead>
 				<tr>
 					<th style="width: 20px">No</th>
-					<th style="width: ;">Judul</th>
+					<th style="width: ;">Nama Dosen</th>
+                    <th style="width: ;">Jenis Kelamin</th>
+                    <th style="width: ;">No Telp</th>
 					<th style="width: 80px;">Action</th>
 				</tr>
 			</thead>
@@ -198,6 +200,7 @@ div.dt-buttons{
 		</table>
 	</div>
 </div>
+
 
 </div>
 

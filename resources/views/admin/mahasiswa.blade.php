@@ -28,7 +28,7 @@ div.dt-buttons{
             // }
         ],
         ajax: {
-            url: '{{ url("dosen/list-penelitian") }}',
+            url: '{{ url("admin/mahasiswa-list") }}',
             beforeSend	: function(xhr){ 
                 xhr.setRequestHeader("X-CSRF-TOKEN", $('meta[name="csrf-token"]').attr('content'));
             },
@@ -70,7 +70,7 @@ div.dt-buttons{
         ],
         columnDefs: [
             {
-                targets: [1], 
+                targets: [1,2,3,4], 
                 className: 'text-center',
             }
         ],
@@ -90,7 +90,7 @@ div.dt-buttons{
         postData = new Object();
 		postData.dosen_judul_id = dosen_judul_id;
 		ajax({
-			url : "{{ url('dosen/list-penelitian-show') }}", 
+			url : "{{ url('admin/mahasiswa-show') }}", 
 			postData : postData,
 			success : function(ret){
 				$('#dlgData').modal('show');
@@ -107,20 +107,13 @@ div.dt-buttons{
         table.draw();
     });
 
-	$('#btnAdd').click(function(e){
-		alertBox('hide', {selectorAlert: '#alertData'});
-		$('.modal-footer').removeAttr('style');
-		$('#token').val(token);
-		$('#addData').modal('show');
-	});
-
 	$('#frmData').submit(function(){
 		var formData = new FormData($('#frmData')[0]);
 		$.ajax({
 			type: 'POST',
 			headers: {'X-CSRF-TOKEN': csrfToken},
             data: formData,
-			url : "{{ url('dosen/list-penelitian-edit') }}",
+			url : "{{ url('admin/mahasiswa-tambah') }}",
             contentType: false,
             processData: false,
             cache: false,
@@ -189,13 +182,47 @@ div.dt-buttons{
 			<thead>
 				<tr>
 					<th style="width: 20px">No</th>
-					<th style="width: ;">Judul</th>
+					<th style="width: ;">Nama Mahasiswa</th>
+                    <th style="width: ;">Jenis Kelamin</th>
+                    <th style="width: ;">No Telp</th>
 					<th style="width: 80px;">Action</th>
 				</tr>
 			</thead>
 			<tbody>
 			</tbody>
 		</table>
+	</div>
+</div>
+
+<div id="dlgData" class="modal fade">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Masukkan Judul Penelitian <b id="desa-result"></b></h4>
+			</div>
+
+			<form class="form-horizontal" id="frmData" onSubmit="return false" method="post" enctype="multipart/form-data" action="#">
+			@csrf
+				<div class="modal-body">
+					<div id="alertData" style="display: none;"></div>
+					<input type="hidden" name="mode" value="edit" id="mode">
+                    <input type="hidden" name="dosen_judul_id" id="dosen_judul_id">
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label" for="dosen_judul">Judul Penelitian </label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control rupiah" id="dosen_judul" name="dosen_judul" required="" value="">
+						</div>
+					</div>
+				</div>
+					
+					
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-default" id="save-data">Save</button>
+				</div>
+			</form>
+		</div>
 	</div>
 </div>
 

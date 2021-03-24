@@ -16,9 +16,15 @@
 		@if(in_array(Auth::User()->role, [1]))
 
 
-            <li class="{{ ($controller=='AdminDesaController'?'active':'') }}">
-                <a href="{{ url('admin') }}">
-                    <i class="fa fa-user"></i> <span>Admin Desa</span>
+            <li class="{{ ($controller=='MasterController'?'active':'') }}">
+                <a href="{{ url('admin/dosen-list') }}">
+                    <i class="fa fa-user"></i> <span>Master Dosen</span>
+                </a>
+            </li>
+
+            <li class="{{ ($controller=='MasterController'?'active':'') }}">
+                <a href="{{ url('admin/mahasiswa-list') }}">
+                    <i class="fa fa-user"></i> <span>Master Mahasiswa</span>
                 </a>
             </li>
 		@endif
