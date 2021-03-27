@@ -199,6 +199,36 @@ div.dt-buttons{
 	</div>
 </div>
 
+<div id="dlgData" class="modal fade">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Data Dana Desa <b id="desa-result"></b></h4>
+			</div>
+
+			<form class="form-horizontal" id="frmData" onSubmit="return false" method="post" enctype="multipart/form-data" action="#">
+			@csrf
+				<div class="modal-body">
+					<div id="alertData" style="display: none;"></div>
+					<input type="hidden" name="mode" value="edit" id="mode">
+                    <input type="hidden" name="dosen_judul_id" id="dosen_judul_id">
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label" for="dosen_judul">Judul Penelitian </label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control rupiah" id="dosen_judul" name="dosen_judul" required="" value="">
+						</div>
+					</div>
+				</div>
+
+
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-default" id="save-data">Save</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
 
 @endsection
