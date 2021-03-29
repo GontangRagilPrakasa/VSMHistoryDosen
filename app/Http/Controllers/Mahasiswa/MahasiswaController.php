@@ -125,7 +125,7 @@ class MahasiswaController extends Controller
                     foreach ($data[0]['details'] as $key => $value) {
                         $option_dosen_rekomendasi[] =  [
                             'id'                => $value['dosen_id'],
-                            'dosen'             => $value['dosen'] . " judul = ". $value['judul'] ." ( ". $value['score']  ." )",
+                            'dosen'             => $value['dosen'] . " (". $value['judul'] ." [ ". $value['score']  ." ] )",
                         ];
                     }
                 }                
