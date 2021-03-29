@@ -53,7 +53,7 @@
 									<li class="user-footer">
 										<div class="row">
 											<div class="col-md-7">
-												<a href="{{ url('change-password') }}" class="btn btn-block btn-default">Ubah Password</a>
+												<!-- <a href="{{ url('change-password') }}" class="btn btn-block btn-default">Ubah Password</a> -->
 											</div>
 											<div class="col-md-5">
 												<a href="{{ url('logout') }}" class="btn btn-block btn-default">Logout</a>
