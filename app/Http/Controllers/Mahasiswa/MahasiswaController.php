@@ -114,14 +114,17 @@ class MahasiswaController extends Controller
                 $query =  str_replace(" ", "%20", $data_mahasiswa['mahasiswa_judul_skripsi']);
                 $json=file_get_contents("http://localhost:5000/search?q=$query");
                 $data = json_decode($json, true);
-            
                 
-                foreach ($data[0]['details'] as $key => $value) {
-                    $option_dosen_rekomendasi[] =  [
-                        'id'                => $value['dosen_id'],
-                        'dosen'             => $value['dosen'] . " judul = ". $value['judul'] ." ( ". $value['score']  ." )",
-                    ];
-                }
+                if(empty($data)) {
+                    $option_dosen_rekomendasi[] = [];
+                } else {
+                    foreach ($data[0]['details'] as $key => $value) {
+                        $option_dosen_rekomendasi[] =  [
+                            'id'                => $value['dosen_id'],
+                            'dosen'             => $value['dosen'] . " judul = ". $value['judul'] ." ( ". $value['score']  ." )",
+                        ];
+                    }
+                }                
             }
         }
 

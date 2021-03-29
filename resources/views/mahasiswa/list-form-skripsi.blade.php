@@ -256,13 +256,18 @@ div.dt-buttons{
 					@csrf
 					<div class="form-group">
                         <label class="col-sm-3 control-label" for="rekomendasi_dosen">Pilih Dosen</label>
+						
                         <div class="col-sm-9">
-                            <select name="rekomendasi_dosen" id="rekomendasi_dosen" class="select2" required>
-                                <option value="" disabled selected hidden>Pilih Rekomendasi Dosen Berdasarkan Judul</option>
-									@foreach ($option_dosen_rekomendasi as $key => $value)
-                                    	<option value="{{ $value['id'] }}"> {{ $value['dosen'] }}</option>
-									@endforeach     
-                            </select>
+							@if (!empty($option_dosen_rekomendasi[0]))
+								<select name="rekomendasi_dosen" id="rekomendasi_dosen" class="select2" required>
+									<option value="" disabled selected hidden>Pilih Rekomendasi Dosen Berdasarkan Judul</option>
+										@foreach ($option_dosen_rekomendasi as $key => $value)
+											<option value="{{ @$value['id'] }}"> {{ @$value['dosen'] }}</option>
+										@endforeach     
+								</select>
+							@else
+								<label class="control-label">Tidak ada dosen yang direkomendasikan</label>
+							@endif
                         </div>
                     </div>
                 </div>

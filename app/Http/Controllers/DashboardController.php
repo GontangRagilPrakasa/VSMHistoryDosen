@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use DB;
 use Auth;
+use App\Models\MstDosenPengampu;
 
 class DashboardController extends Controller
 {
@@ -30,8 +31,12 @@ class DashboardController extends Controller
             $json=file_get_contents("http://localhost:5000/search?q=$query");
 
             $data = json_decode($json, true);
-
-            $ret->data = $data[0]['details'];
+            if(empty($data)) {
+                $ret->data = array();
+            } else {
+                $ret->data = $data[0]['details'];
+            }
+            
         } else {
             $ret->data = array();
         }
