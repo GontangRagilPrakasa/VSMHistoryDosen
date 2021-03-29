@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\SysMahasiswa;
 use App\Models\MstDosenPengampu;
 use App\Models\OptGender;
+use App\Models\SysUsers;
 use App\Repositories\IndexDesaRepostiory;
 use Session;
 
@@ -66,14 +67,17 @@ class MahasiswaController extends Controller
         try{
 
             $master_mahasiswa = SysMahasiswa::where('users_id', Auth::user()->user_id)->first();
-            
-            if (is_null($master_mahasiswa)) {
-                $master_mahasiswa = new SysMahasiswa();
-            }
+            $user             = SysUsers::where('user_id', $master_mahasiswa['users_id'])->first();
 
-            $master_mahasiswa->mahasiswa_name      = $request['mahasiswa_name'];
-            $master_mahasiswa->mahasiswa_telp      = $request['mahasiswa_telp'];
-            $master_mahasiswa->mahasiswa_jk        = $request['mahasiswa_jk'];
+            $user->full_name    = $request['mahasiswa_name'];
+            $user->username     = $request['mahasiswa_name'];
+
+            if ($user->save()) {
+                $master_mahasiswa->mahasiswa_name      = $request['mahasiswa_name'];
+                $master_mahasiswa->mahasiswa_telp      = $request['mahasiswa_telp'];
+                $master_mahasiswa->mahasiswa_jk        = $request['mahasiswa_jk'];
+            }
+            
 
             if ($master_mahasiswa->save()) {
                 $ret->status = 200;
