@@ -59,7 +59,8 @@ div.dt-buttons{
                 }
             },
 			{ data: "dosen_name", name: "dosen_name"},
-			{ data: "dosen_jk", name: "dosen_jk"},
+			{ data: "email", name: "email"},
+			{ data: "dosen_jk_ret", name: "dosen_jk_ret"},
 			{ data: "dosen_telp", name: "dosen_telp"},
             { data: "dosen_id", name: "dosen_id", orderable: false, 
                 render: function(data, type, row, meta){
@@ -219,6 +220,7 @@ div.dt-buttons{
 				<tr>
 					<th style="width: 20px">No</th>
 					<th style="width: ;">Nama Dosen</th>
+					<th style="width: ;">Email Dosen</th>
                     <th style="width: ;">Jenis Kelamin</th>
                     <th style="width: ;">No Telp</th>
 					<th style="width: 80px;">Action</th>

@@ -27,7 +27,7 @@ class MasterController extends Controller
         $ret->recordsTotal = 0;
         $ret->recordsFiltered = 0;
         $ret->data = array();
-        $query = SysDosen::select(['sys_dosen.*'])->join('sys_users','sys_users.user_id','sys_dosen.users_id')
+        $query = SysDosen::select(['sys_dosen.*',DB::raw("(CASE WHEN sys_dosen.dosen_jk=1 THEN 'Laki-Laki' WHEN sys_dosen.dosen_jk=2 THEN 'Perempuan' END) as dosen_jk_ret"),'sys_users.email'])->join('sys_users','sys_users.user_id','sys_dosen.users_id')
         ->whereNull('sys_users.deleted_at');
 
         $keyword = $request["keyword"];
@@ -253,7 +253,7 @@ class MasterController extends Controller
         $ret->recordsTotal = 0;
         $ret->recordsFiltered = 0;
         $ret->data = array();
-        $query = SysMahasiswa::select(['sys_mahasiswa.*','sys_users.email'])->join('sys_users','sys_users.user_id','sys_mahasiswa.users_id')
+        $query = SysMahasiswa::select(['sys_mahasiswa.*',DB::raw("(CASE WHEN sys_mahasiswa.mahasiswa_jk=1 THEN 'Laki-Laki' WHEN sys_mahasiswa.mahasiswa_jk=2 THEN 'Perempuan' END) as mahasiswa_jk_ret"),'sys_users.email'])->join('sys_users','sys_users.user_id','sys_mahasiswa.users_id')
         ->whereNull('sys_users.deleted_at');
 
         $keyword = $request["keyword"];

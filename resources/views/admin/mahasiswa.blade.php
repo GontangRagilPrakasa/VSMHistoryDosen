@@ -59,8 +59,8 @@ div.dt-buttons{
                 }
             },
 			{ data: "mahasiswa_name", name: "mahasiswa_name"},
-			{ data: "mahasiswa_jk", name: "mahasiswa_jk"},
 			{ data: "email", name: "email"},
+			{ data: "mahasiswa_jk_ret", name: "mahasiswa_jk_ret"},
 			{ data: "mahasiswa_telp", name: "mahasiswa_telp"},
             { data: "mahasiswa_id", name: "mahasiswa_id", orderable: false, 
                 render: function(data, type, row, meta){
