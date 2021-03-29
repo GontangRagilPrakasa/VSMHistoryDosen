@@ -121,6 +121,8 @@ class MahasiswaController extends Controller
                 
                 if(empty($data)) {
                     $option_dosen_rekomendasi[] = [];
+                } else if(is_null($data_mahasiswa['mahasiswa_judul_skripsi'])) {
+                    $option_dosen_rekomendasi[] = [];
                 } else {
                     foreach ($data[0]['details'] as $key => $value) {
                         $option_dosen_rekomendasi[] =  [
@@ -134,7 +136,8 @@ class MahasiswaController extends Controller
 
         return view('mahasiswa.list-form-skripsi')->with([
             'option_dosen_rekomendasi'      => $option_dosen_rekomendasi,
-            'status_skripsi'                => $status_skripsi['approval']
+            'status_skripsi'                => $status_skripsi['approval'],
+            'judul'                         => $data_mahasiswa['mahasiswa_judul_skripsi']
         ]);
     }
 

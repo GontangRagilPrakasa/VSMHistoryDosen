@@ -265,6 +265,8 @@ div.dt-buttons{
 											<option value="{{ @$value['id'] }}"> {{ @$value['dosen'] }}</option>
 										@endforeach     
 								</select>
+							@elseif (is_null($judul))
+								<label class="control-label">silahkan Masukkan Judul Skripsi</label>
 							@else
 								<label class="control-label">Tidak ada dosen yang direkomendasikan</label>
 							@endif
