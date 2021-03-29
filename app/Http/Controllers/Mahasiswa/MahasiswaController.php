@@ -73,9 +73,10 @@ class MahasiswaController extends Controller
             $user->username     = $request['mahasiswa_name'];
 
             if ($user->save()) {
-                $master_mahasiswa->mahasiswa_name      = $request['mahasiswa_name'];
-                $master_mahasiswa->mahasiswa_telp      = $request['mahasiswa_telp'];
-                $master_mahasiswa->mahasiswa_jk        = $request['mahasiswa_jk'];
+                $master_mahasiswa->mahasiswa_name               = $request['mahasiswa_name'];
+                $master_mahasiswa->mahasiswa_telp               = $request['mahasiswa_telp'];
+                $master_mahasiswa->mahasiswa_jk                 = $request['mahasiswa_jk'];
+                $master_mahasiswa->mahasiswa_judul_skripsi      = $request['mahasiswa_judul_skripsi'];
             }
             
 
