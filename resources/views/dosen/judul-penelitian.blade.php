@@ -204,7 +204,7 @@ div.dt-buttons{
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title">Data Dana Desa <b id="desa-result"></b></h4>
+				<h4 class="modal-title">Edit Judul Dosen <b id="data-result"></b></h4>
 			</div>
 
 			<form class="form-horizontal" id="frmData" onSubmit="return false" method="post" enctype="multipart/form-data" action="#">
