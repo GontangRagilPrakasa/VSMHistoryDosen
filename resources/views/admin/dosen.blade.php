@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'Penelitian')
+@section('title', 'Data Dosen')
 @section('contentCss')
 <style>
 div.dt-buttons{
@@ -28,7 +28,7 @@ div.dt-buttons{
             // }
         ],
         ajax: {
-            url: '{{ url("admin/dosen-list") }}',
+            url: '{{ url("admin/dosen-list-all") }}',
             beforeSend	: function(xhr){ 
                 xhr.setRequestHeader("X-CSRF-TOKEN", $('meta[name="csrf-token"]').attr('content'));
             },
@@ -58,19 +58,23 @@ div.dt-buttons{
                     return (meta.row+1);
                 }
             },
-			{ data: "dosen_judul", name: "dosen_judul"},
-            { data: "dosen_judul_id", name: "dosen_judul_id", orderable: false, 
+			{ data: "dosen_name", name: "dosen_name"},
+			{ data: "dosen_jk", name: "dosen_jk"},
+			{ data: "dosen_telp", name: "dosen_telp"},
+            { data: "dosen_id", name: "dosen_id", orderable: false, 
                 render: function(data, type, row, meta){
-                    var elShow = '<a class="btn btn-sm btn-default" href="javascript: editData(\''+row.dosen_judul_id+'\');"><i class="fa fa-eye"></i></a>';
+                    var elShow = '<a class="btn btn-sm btn-default" href="javascript: editData(\''+row.dosen_id+'\');"><i class="fa fa-eye"></i></a>';
+					var elDelete = '<a class="btn btn-sm btn-default" href="javascript: deleteData(\''+row.dosen_id+'\', \''+row.dosen_name+'\');"><i class="fa fa-trash"></i></a>';
                     return '<div class="btn-group">\
 							'+elShow+'\
+							'+elDelete+'\
 						</div>';
                 } 			
             },
         ],
         columnDefs: [
             {
-                targets: [1,2,3,4], 
+                targets: [1,2,3], 
                 className: 'text-center',
             }
         ],
@@ -86,18 +90,41 @@ div.dt-buttons{
         },			
     });
 
-    function editData(dosen_judul_id){
+	function deleteData(dosen_id, dosen_name){
+		conf = confirm("Apakah anda yakin akan menghapus Dosen "+dosen_name+" ?");
+		if( conf ){
+			postData = new Object();
+			postData.dosen_id = dosen_id;
+
+			ajax({
+				url : "{{ url('admin/dosen-delete') }}", 
+				postData : postData,
+				success : function(ret){
+					alert("Dosen "+dosen_name+" sudah berhasil dihapus");
+					table.draw();
+				},
+			});		
+		}
+	}
+
+    function editData(dosen_id){
         postData = new Object();
-		postData.dosen_judul_id = dosen_judul_id;
+		postData.dosen_id = dosen_id;
 		ajax({
 			url : "{{ url('admin/dosen-show') }}", 
 			postData : postData,
 			success : function(ret){
 				$('#dlgData').modal('show');
+				$('#mode').val('edit');
 				var data = ret.data;
-
-                $('#dosen_judul_id').val(data.dosen_judul_id);
-                $('#dosen_judul').val(data.dosen_judul);
+				$('#dosen_id').val(data.dosen_id);
+                $('#dosen_name').val(data.dosen_name);
+				$('#dosen_jk').val(data.dosen_jk).trigger('change');
+                $('#dosen_telp').val(data.dosen_telp);
+				$('#email-class').addClass('hidden');
+				$('#email').attr("required", false);
+				$('#password-class').addClass("hidden");
+				$('#password').attr("required", false);
 
             }
 		});
@@ -107,11 +134,16 @@ div.dt-buttons{
         table.draw();
     });
 
-	$('#btnAdd').click(function(e){
+	$('#btnAddDosen').click(function(e){
 		alertBox('hide', {selectorAlert: '#alertData'});
 		$('.modal-footer').removeAttr('style');
 		$('#token').val(token);
-		$('#addData').modal('show');
+		$('#dlgData').modal('show');
+		$('#email-class').removeClass('hidden');
+		$('#email').attr("required", true);
+		$('#password-class').removeClass("hidden");
+		$('#password').attr("required", true);
+
 	});
 
 	$('#frmData').submit(function(){
@@ -120,7 +152,7 @@ div.dt-buttons{
 			type: 'POST',
 			headers: {'X-CSRF-TOKEN': csrfToken},
             data: formData,
-			url : "{{ url('admin/dosen-tambah') }}",
+			url : "{{ url('admin/dosen-save') }}",
             contentType: false,
             processData: false,
             cache: false,
@@ -138,9 +170,6 @@ div.dt-buttons{
 		});
 	});
 
-
-
-
 </script>
 @endsection
 
@@ -149,7 +178,7 @@ div.dt-buttons{
 	<div class="row col-md-12">
 		<div class="">
 			<div class="col-md-12">
-				<a href="{{ url('dosen/list-penelitian-tambah') }}" class="btn btn-default">Tambah Judul Penelitian</a>
+				<button id="btnAddDosen" class="btn btn-default">Tambah Data Dosen</button>
 			</div>
 		</div>
 		<br><br>
@@ -201,7 +230,65 @@ div.dt-buttons{
 	</div>
 </div>
 
+<div id="dlgData" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Tambah Data Dosen</h4>
+			</div>
+			<form class="form-horizontal" id="frmData" onSubmit="return false" method="post" enctype="multipart/form-data" action="#">
+				<div class="modal-body">
+					<div id="alertData" style="display: none;"></div>
+					@csrf
+					<input type="text" name="mode" id="mode" value="add" required class="hidden">
+					<input type="text" name="dosen_id" id="dosen_id" class="hidden">
+					<div class="form-group">
+                        <label class="col-sm-3 control-label" for="dosen_name">Nama Dosen</label>
+                        <div class="col-sm-9">
+							<input type="text" name="dosen_name" id="dosen_name" required class="form-control">
+                        </div>
+                    </div>
 
+					<div class="form-group" id="email-class">
+                        <label class="col-sm-3 control-label" for="email">Email</label>
+                        <div class="col-sm-9">
+							<input type="text" name="email" id="email" class="form-control" >
+                        </div>
+                    </div>
+
+					<div class="form-group">
+                        <label class="col-sm-3 control-label" for="dosen_jk">Jenis Kelamin</label>
+                        <div class="col-sm-9">
+							<select name="dosen_jk" id="dosen_jk" class="select2" required>
+                                <option value="" disabled selected hidden>Pilih Jenis Kelamin</option>
+									@foreach ($genders as $key => $gender)
+                                    	<option value="{{ $key }}"> {{ $gender }}</option>
+									@endforeach     
+                            </select>
+                        </div>
+                    </div>
+
+					<div class="form-group">
+                        <label class="col-sm-3 control-label" for="dosen_telp">No Telephone</label>
+                        <div class="col-sm-9">
+							<input type="text" name="dosen_telp" id="dosen_telp" required class="form-control">
+                        </div>
+                    </div>
+
+					<div class="form-group" id="password-class">
+                        <label class="col-sm-3 control-label" for="password">Pasword</label>
+                        <div class="col-sm-9">
+							<input type="password" name="password" id="password" class="form-control">
+                        </div>
+                    </div>
+                </div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-default" >Save</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
 
 @endsection

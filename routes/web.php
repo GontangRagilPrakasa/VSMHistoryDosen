@@ -35,16 +35,16 @@ Route::group(['prefix' => ''], function() {
 		Route::group(['middleware' => 'check.role:1'], function () {
 			Route::group(['prefix' => 'admin'], function(){
 				Route::get('/dosen-list', 'MasterController@adminDosenList');
-				Route::post('/dosen-show', 'MasterController@adminDosenList');
-				Route::post('/dosen-tambah', 'MasterController@adminDosenTambah');
-				Route::post('/dosen-edit', 'MasterController@adminDosenEdit');
-				Route::post('/dosen-delete', 'DosenController@adminDosenDelete');
+				Route::post('/dosen-list-all', 'MasterController@adminDosenGetAll');
+				Route::post('/dosen-show', 'MasterController@adminDosenShow');
+				Route::post('/dosen-save', 'MasterController@adminDosenSave');
+				Route::post('/dosen-delete', 'MasterController@adminDosenDelete');
 
 
 				Route::get('/mahasiswa-list', 'MasterController@adminMahasiswaList');
-				Route::post('/mahasiswa-show', 'MasterController@adminMahasiswaList');
-				Route::post('/mahasiswa-tambah', 'MasterController@adminMahasiswaTambah');
-				Route::post('/mahasiswa-edit', 'MasterController@adminMahasiswaEdit');
+				Route::post('/mahasiswa-list-all', 'MasterController@adminMahasiswaGetAll');
+				Route::post('/mahasiswa-show', 'MasterController@adminMahasiswaShow');
+				Route::post('/mahasiswa-save', 'MasterController@adminMahasiswaSave');
 				Route::post('/mahasiswa-delete', 'MasterController@adminMahasiswaDelete');
 			});
 			

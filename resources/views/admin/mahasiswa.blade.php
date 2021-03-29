@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'Penelitian')
+@section('title', 'Data Dosen')
 @section('contentCss')
 <style>
 div.dt-buttons{
@@ -28,7 +28,7 @@ div.dt-buttons{
             // }
         ],
         ajax: {
-            url: '{{ url("admin/mahasiswa-list") }}',
+            url: '{{ url("admin/mahasiswa-list-all") }}',
             beforeSend	: function(xhr){ 
                 xhr.setRequestHeader("X-CSRF-TOKEN", $('meta[name="csrf-token"]').attr('content'));
             },
@@ -58,19 +58,24 @@ div.dt-buttons{
                     return (meta.row+1);
                 }
             },
-			{ data: "dosen_judul", name: "dosen_judul"},
-            { data: "dosen_judul_id", name: "dosen_judul_id", orderable: false, 
+			{ data: "mahasiswa_name", name: "mahasiswa_name"},
+			{ data: "mahasiswa_jk", name: "mahasiswa_jk"},
+			{ data: "email", name: "email"},
+			{ data: "mahasiswa_telp", name: "mahasiswa_telp"},
+            { data: "mahasiswa_id", name: "mahasiswa_id", orderable: false, 
                 render: function(data, type, row, meta){
-                    var elShow = '<a class="btn btn-sm btn-default" href="javascript: editData(\''+row.dosen_judul_id+'\');"><i class="fa fa-eye"></i></a>';
+                    var elShow = '<a class="btn btn-sm btn-default" href="javascript: editData(\''+row.mahasiswa_id+'\');"><i class="fa fa-eye"></i></a>';
+					var elDelete = '<a class="btn btn-sm btn-default" href="javascript: deleteData(\''+row.mahasiswa_id+'\', \''+row.mahasiswa_name+'\');"><i class="fa fa-trash"></i></a>';
                     return '<div class="btn-group">\
 							'+elShow+'\
+							'+elDelete+'\
 						</div>';
                 } 			
             },
         ],
         columnDefs: [
             {
-                targets: [1,2,3,4], 
+                targets: [1,2,3], 
                 className: 'text-center',
             }
         ],
@@ -86,18 +91,41 @@ div.dt-buttons{
         },			
     });
 
-    function editData(dosen_judul_id){
+	function deleteData(mahasiswa_id, mahasiswa_name){
+		conf = confirm("Apakah anda yakin akan menghapus Dosen "+mahasiswa_name+" ?");
+		if( conf ){
+			postData = new Object();
+			postData.mahasiswa_id = mahasiswa_id;
+
+			ajax({
+				url : "{{ url('admin/mahasiswa-delete') }}", 
+				postData : postData,
+				success : function(ret){
+					alert("Dosen "+mahasiswa_name+" sudah berhasil dihapus");
+					table.draw();
+				},
+			});		
+		}
+	}
+
+    function editData(mahasiswa_id){
         postData = new Object();
-		postData.dosen_judul_id = dosen_judul_id;
+		postData.mahasiswa_id = mahasiswa_id;
 		ajax({
 			url : "{{ url('admin/mahasiswa-show') }}", 
 			postData : postData,
 			success : function(ret){
 				$('#dlgData').modal('show');
+				$('#mode').val('edit');
 				var data = ret.data;
-
-                $('#dosen_judul_id').val(data.dosen_judul_id);
-                $('#dosen_judul').val(data.dosen_judul);
+				$('#mahasiswa_id').val(data.mahasiswa_id);
+                $('#mahasiswa_name').val(data.mahasiswa_name);
+				$('#mahasiswa_jk').val(data.mahasiswa_jk).trigger('change');
+                $('#mahasiswa_telp').val(data.mahasiswa_telp);
+				$('#email-class').addClass('hidden');
+				$('#email').attr("required", false);
+				$('#password-class').addClass("hidden");
+				$('#password').attr("required", false);
 
             }
 		});
@@ -107,13 +135,25 @@ div.dt-buttons{
         table.draw();
     });
 
+	$('#btnAddDosen').click(function(e){
+		alertBox('hide', {selectorAlert: '#alertData'});
+		$('.modal-footer').removeAttr('style');
+		$('#token').val(token);
+		$('#dlgData').modal('show');
+		$('#email-class').removeClass('hidden');
+		$('#email').attr("required", true);
+		$('#password-class').removeClass("hidden");
+		$('#password').attr("required", true);
+
+	});
+
 	$('#frmData').submit(function(){
 		var formData = new FormData($('#frmData')[0]);
 		$.ajax({
 			type: 'POST',
 			headers: {'X-CSRF-TOKEN': csrfToken},
             data: formData,
-			url : "{{ url('admin/mahasiswa-tambah') }}",
+			url : "{{ url('admin/mahasiswa-save') }}",
             contentType: false,
             processData: false,
             cache: false,
@@ -131,9 +171,6 @@ div.dt-buttons{
 		});
 	});
 
-
-
-
 </script>
 @endsection
 
@@ -142,7 +179,7 @@ div.dt-buttons{
 	<div class="row col-md-12">
 		<div class="">
 			<div class="col-md-12">
-				<a href="{{ url('dosen/list-penelitian-tambah') }}" class="btn btn-default">Tambah Judul Penelitian</a>
+				<button id="btnAddDosen" class="btn btn-default">Tambah Data Mahasiswa</button>
 			</div>
 		</div>
 		<br><br>
@@ -183,6 +220,7 @@ div.dt-buttons{
 				<tr>
 					<th style="width: 20px">No</th>
 					<th style="width: ;">Nama Mahasiswa</th>
+					<th style="width: ;">Email Mahasiswa</th>
                     <th style="width: ;">Jenis Kelamin</th>
                     <th style="width: ;">No Telp</th>
 					<th style="width: 80px;">Action</th>
@@ -195,37 +233,64 @@ div.dt-buttons{
 </div>
 
 <div id="dlgData" class="modal fade">
-	<div class="modal-dialog modal-lg">
+	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title">Masukkan Judul Penelitian <b id="desa-result"></b></h4>
+				<h4 class="modal-title">Tambah Data Mahasiswa</h4>
 			</div>
-
 			<form class="form-horizontal" id="frmData" onSubmit="return false" method="post" enctype="multipart/form-data" action="#">
-			@csrf
 				<div class="modal-body">
 					<div id="alertData" style="display: none;"></div>
-					<input type="hidden" name="mode" value="edit" id="mode">
-                    <input type="hidden" name="dosen_judul_id" id="dosen_judul_id">
+					@csrf
+					<input type="text" name="mode" id="mode" value="add" required class="hidden">
+					<input type="text" name="mahasiswa_id" id="mahasiswa_id" class="hidden">
+					<div class="form-group">
+                        <label class="col-sm-3 control-label" for="mahasiswa_name">Nama Mahasiswa</label>
+                        <div class="col-sm-9">
+							<input type="text" name="mahasiswa_name" id="mahasiswa_name" required class="form-control">
+                        </div>
+                    </div>
+
+					<div class="form-group" id="email-class">
+                        <label class="col-sm-3 control-label" for="email">Email</label>
+                        <div class="col-sm-9">
+							<input type="text" name="email" id="email" class="form-control" >
+                        </div>
+                    </div>
 
 					<div class="form-group">
-						<label class="col-sm-3 control-label" for="dosen_judul">Judul Penelitian </label>
-						<div class="col-sm-9">
-							<input type="text" class="form-control rupiah" id="dosen_judul" name="dosen_judul" required="" value="">
-						</div>
-					</div>
-				</div>
-					
-					
+                        <label class="col-sm-3 control-label" for="mahasiswa_jk">Jenis Kelamin</label>
+                        <div class="col-sm-9">
+							<select name="mahasiswa_jk" id="mahasiswa_jk" class="select2" required>
+                                <option value="" disabled selected hidden>Pilih Jenis Kelamin</option>
+									@foreach ($genders as $key => $gender)
+                                    	<option value="{{ $key }}"> {{ $gender }}</option>
+									@endforeach     
+                            </select>
+                        </div>
+                    </div>
+
+					<div class="form-group">
+                        <label class="col-sm-3 control-label" for="mahasiswa_telp">No Telephone</label>
+                        <div class="col-sm-9">
+							<input type="text" name="mahasiswa_telp" id="mahasiswa_telp" required class="form-control">
+                        </div>
+                    </div>
+
+					<div class="form-group" id="password-class">
+                        <label class="col-sm-3 control-label" for="password">Pasword</label>
+                        <div class="col-sm-9">
+							<input type="password" name="password" id="password" class="form-control">
+                        </div>
+                    </div>
+                </div>
 				<div class="modal-footer">
-					<button type="submit" class="btn btn-default" id="save-data">Save</button>
+					<button type="submit" class="btn btn-default" >Save</button>
 				</div>
 			</form>
 		</div>
 	</div>
-</div>
-
 </div>
 
 @endsection
