@@ -75,8 +75,8 @@ class DosenController extends Controller
 
         $query = MstDosenPengampu::select([
             'mst_dosen_mengampu.id as judul_id',
-            'mst_dosen_mengampu.start_mengampu',
-            'mst_dosen_mengampu.selesai_mengampu',
+            DB::raw("DATE_FORMAT(mst_dosen_mengampu.start_mengampu, '%d-%b-%Y') as start_mengampu"),
+            DB::raw("DATE_FORMAT(mst_dosen_mengampu.selesai_mengampu, '%d-%b-%Y') as selesai_mengampu"),
             DB::raw("(CASE WHEN mst_dosen_mengampu.approval=1 THEN 'Disetujui' WHEN mst_dosen_mengampu.approval=0 THEN 'Belum DiSetujui' END) as approval"),
             'sys_mahasiswa.mahasiswa_name'
         ])

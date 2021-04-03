@@ -58,16 +58,16 @@ div.dt-buttons{
             { data: "start_mengampu", name: "start_mengampu"},
             { data: "selesai_mengampu", name: "selesai_mengampu"},
 			{ data: "approval", name: "approval"},
-            { data: "judul_id", name: "judul_id", orderable: false, 
-                render: function(data, type, row, meta){
-                    var elShow = '<a class="btn btn-sm btn-default" href="javascript: editData(\''+row.judul_id+'\');"><i class="fa fa-eye"></i></a>';
-                    var elDelete = '<a class="btn btn-sm btn-default" href="javascript: deleteData(\''+row.judul_id+'\');"><i class="fa fa-trash"></i></a>';
-					return '<div class="btn-group">\
-							'+elShow+'\
-							'+elDelete+'\
-						</div>';
-                } 			
-            },
+            // { data: "judul_id", name: "judul_id", orderable: false, 
+            //     render: function(data, type, row, meta){
+            //         var elShow = '<a class="btn btn-sm btn-default" href="javascript: editData(\''+row.judul_id+'\');"><i class="fa fa-eye"></i></a>';
+            //         var elDelete = '<a class="btn btn-sm btn-default" href="javascript: deleteData(\''+row.judul_id+'\');"><i class="fa fa-trash"></i></a>';
+			// 		return '<div class="btn-group">\
+			// 				'+elShow+'\
+			// 				'+elDelete+'\
+			// 			</div>';
+            //     } 			
+            // },
         ],
         columnDefs: [
             {
@@ -186,7 +186,7 @@ div.dt-buttons{
                     <th style="width: ;">Start Skripsi</th>
                     <th style="width: ;">Selesai Skripsi</th>
                     <th style="width: ;">Status</th>
-					<th style="width: 80px;">Action</th>
+					<!-- <th style="width: 80px;">Action</th> -->
 				</tr>
 			</thead>
 			<tbody>
