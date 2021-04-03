@@ -3,7 +3,7 @@
 		<thead>
 			<tr>
 				<th>No.</th>
-				<th width="25%">Name</th>
+				<th width="40%">Name</th>
 				<th width="60%">Result</th>
 			</tr>
 		</thead>
@@ -12,7 +12,7 @@
 				<?php $data = $log->skripsi_log; ?>
 				<tr>
 					<td>{{ $key+1 }}</td>
-					<td>
+					<td >
 						<?php
 							$list = unserialize($data);
 							if(!empty($list)){ // check if the array/string is empty
@@ -21,10 +21,10 @@
 							    }
 							}	
 							echo "<b>Tanggal Pengajuan</b><br>";
-                            if ($log->status_skripsi == 0) echo "<b>Pengajuan</b><br>";
-							if ($log->status_skripsi == 1) echo "<b>Disetujui</b><br>";
-							if ($log->status_skripsi == 2) echo "<b>Tidak Disetujui</b><br>";
-                            if ($log->status_skripsi == 3) echo "<b>Dibatalkan</b><br>";
+                            if ($log->status_skripsi == 0) echo "<b>( Pengajuan )</b><br>";
+							if ($log->status_skripsi == 1) echo "<b>( Disetujui )</b><br>";
+							if ($log->status_skripsi == 2) echo "<b>( Tidak Disetujui )</b><br>";
+                            if ($log->status_skripsi == 3) echo "<b>( Dibatalkan )</b><br>";
 						?>
 					</td>
 					<td>
