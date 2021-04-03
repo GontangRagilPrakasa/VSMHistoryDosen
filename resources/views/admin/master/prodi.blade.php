@@ -105,6 +105,11 @@ div.dt-buttons{
 		});
     }
 
+	$('#dlgData').on('hidden.bs.modal', function () {
+		$(this).find('form').trigger('reset');
+
+	})
+
     $('#filter_search').click(function(e){
         table.draw();
     });
