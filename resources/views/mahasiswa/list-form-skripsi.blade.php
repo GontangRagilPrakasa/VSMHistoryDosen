@@ -53,21 +53,22 @@ div.dt-buttons{
                     return (meta.row+1);
                 }
             },
-			{ data: "dosen_name", name: "dosen_judul"},
+			{ data: "dosen_name", name: "dosen_name"},
+			{ data: "dosen_name_2", name: "dosen_name_2"},
 			{ data: "created_at", name: "created_at"},
 			{ data: "approval", name: "approval"},
-            { data: "dosen_id_mengampu", name: "dosen_id_mengampu", orderable: false, 
+			{ data: "skripsi_log_id ", name: "skripsi_log_id ", orderable: false, 
                 render: function(data, type, row, meta){
-                    var elShow = '<a class="btn btn-sm btn-default approval" href="javascript: editData(\''+row.dosen_id_mengampu+'\',\''+row.approval_status+'\');"><i class="fa fa-eye"></i></a>';
+					var elLog = '<button class="btn btn-sm btn-default" onclick="unserialize('+row.skripsi_log_id+')"><i class="fa fa-history"></i></button>';
                     return '<div class="btn-group">\
-							'+elShow+'\
+							'+elLog+'\
 						</div>';
                 } 			
             },
         ],
         columnDefs: [
             {
-                targets: [1,2], 
+                targets: [1,2,3,4], 
                 className: 'text-center',
             }
         ],
@@ -82,6 +83,23 @@ div.dt-buttons{
         initComplete: function(settings, json) {
         },			
     });
+
+	function unserialize(skripsi_log_id)
+	{
+		$.ajax({
+			type: 'GET',
+			datatype: 'html',
+			headers: {'X-CSRF-TOKEN': csrfToken},
+			url : "{{ url('mahasiswa/list-skripsi-form/get-log') }}/"+skripsi_log_id, 
+			contentType: false,
+			processData: false,
+			cache: false,
+			success : function(ret){
+				$('#log-skripsi').html(ret);
+			},
+		});
+		$('#dlgDatalog').modal('show');
+	}
 
     $('#frmData').submit(function(){
 		var formData = new FormData($('#frmData')[0]);
@@ -111,30 +129,6 @@ div.dt-buttons{
 		});
 	});
 
-	$('#frmDataReturn').submit(function(){
-		var formData = new FormData($('#frmDataReturn')[0]);
-		$.ajax({
-			type: 'POST',
-			headers: {'X-CSRF-TOKEN': csrfToken},
-            data: formData,
-			url : "{{ url('mahasiswa/pengajuan-batal-skripsi') }}", 
-            contentType: false,
-            processData: false,   
-            cache: false,
-			selectorBlock: '#dlgData .modal-content',
-			selectorAlert: '#alertData',
-			success : function(ret){
-				if (ret.result == true) {
-					$('#dlgData').modal('hide');
-					alertBox('show', {msg: 'Data berhasil disesuaikan', mode: 'success'});
-					table.draw();
-				} else {
-					alertBox('show', {msg: ret.msg, selectorAlert: '#alertData'});
-				}
-			},
-		});
-	});
-
     function editData(dosen_judul_id,approval_status){	
 		$('#dlgData').modal('show');
 		$('#data').val(dosen_judul_id);
@@ -151,8 +145,10 @@ div.dt-buttons{
 		$('#addData').modal('show');
 	});
 
-
-
+	var status = "<?= $skripsi ?>";
+	if (status == 2 ){
+		Swal.fire('Skripsi anda ditolak, silahkan perbarui judul skripsi anda')
+	}
 
 </script>
 @endsection
@@ -160,7 +156,7 @@ div.dt-buttons{
 @section('content')
 <div class="row">
 	<div class="row col-md-12">
-		@if (is_null($status_skripsi))
+		@if ($skripsi == 2)
 			<div class="">
 				<div class="col-md-12">
 					<button id="btnAdd" class="btn btn-default">Form Pengajuan Skripsi</button>
@@ -204,10 +200,11 @@ div.dt-buttons{
 			<thead>
 				<tr>
 					<th style="width: 20px">No</th>
-					<th style="width: ;">Nama Dosen</th>
+					<th style="width: ;">Pembimbing 1</th>
+					<th style="width: ;">Pembimbing 2</th>
 					<th style="width: ;">Tanggal Pengajuan</th>
 					<th style="width: ;">Status</th>
-					<th style="width: 80px;">Action</th>
+					<th style="width: 200;">Keterangan</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -216,28 +213,15 @@ div.dt-buttons{
 	</div>
 </div>
 
-<div id="dlgData" class="modal fade">
+<div id="dlgDatalog" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title">Konfirmasi?</h4>
+				<h4 class="modal-title">Log Skripsi</h4>
 			</div>
-			<div class="modal-body">
-                <p>Apakah anda sudah yakin, ingin membatalkan pembimbing dosen tersebut?</p>
-                <p class="debug-url"></p>
-                <center>
-					<br>
-                	<div class="loader" style="display: none"></div>
-                </center>
-            </div>
-            <div class="modal-footer">
-            	<form class="form-horizontal" id="frmDataReturn" onSubmit="return false" method="post" enctype="multipart/form-data" action="#">
-					<div id="alertData" style="display: none;"></div>
-					@csrf
-					<input type="hidden" name="data" value="" id="data">
-					<button type="submit" class="btn btn-success submit-approval" id="save-data">Save</button>
-				</form>
+			<div class="modal-body" id="log-skripsi">
+	
 			</div>
 		</div>
 	</div>
@@ -255,21 +239,10 @@ div.dt-buttons{
 					<div id="alertData" style="display: none;"></div>
 					@csrf
 					<div class="form-group">
-                        <label class="col-sm-3 control-label" for="rekomendasi_dosen">Pilih Dosen</label>
+                        <label class="col-sm-3 control-label" for="rekomendasi_dosen">Masukkan Judul</label>
 						
                         <div class="col-sm-9">
-							@if (!empty($option_dosen_rekomendasi[0]))
-								<select name="rekomendasi_dosen" id="rekomendasi_dosen" class="select2" required>
-									<option value="" disabled selected hidden>Pilih Rekomendasi Dosen Berdasarkan Judul</option>
-										@foreach ($option_dosen_rekomendasi as $key => $value)
-											<option value="{{ @$value['id'] }}"> {{ @$value['dosen'] }}</option>
-										@endforeach     
-								</select>
-							@elseif (is_null($judul))
-								<label class="control-label">silahkan Masukkan Judul Skripsi</label>
-							@else
-								<label class="control-label">Tidak ada dosen yang direkomendasikan</label>
-							@endif
+							<input type="text" name="mahasiswa_judul_skripsi" id="mahasiswa_judul_skripsi" class="form-control">
                         </div>
                     </div>
                 </div>

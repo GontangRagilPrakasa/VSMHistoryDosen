@@ -19,7 +19,7 @@
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.css" />
 		<link rel="stylesheet" href="{{ asset('css/app.css', ENV('SSL_FLAG')) }}">
-
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.css">
 		@yield('contentCss')
 	</head>
 	<body class="hold-transition skin-blue sidebar-mini">
@@ -109,6 +109,21 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 		<script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.min.js"></script>
+
+		<script>
+			$('.datepicker').datepicker({
+				changeMonth: false,
+				changeYear: true,
+				showButtonPanel: true,
+				yearRange: '1950:2013', // Optional Year Range
+				dateFormat: 'yy',
+				onClose: function(dateText, inst) {
+					var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+					$(this).datepicker('setDate', new Date(year, 0, 1));
+			}});
+
+		</script>
 		@yield('contentJs')
 	</body>
 </html>

@@ -18,7 +18,7 @@
 	<body class="hold-transition login-page">
 		<div class="login-box">
 			<div class="login-logo">
-				<a href=""><b>Penentuan</b> Vector Space Model.</a>
+				<a href=""><b> Sistem Rekomendasi</b> Penentuan Dosen Pembimbing Berdasarkan Topik Penelitian.</a>
 			</div>
 			<div class="login-box-body main-content">
 				<div id="mainAlert" style="display: none;"></div>

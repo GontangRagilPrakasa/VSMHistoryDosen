@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'Data Dosen')
+@section('title', 'Data Fakultas')
 @section('contentCss')
 <style>
 div.dt-buttons{
@@ -28,7 +28,7 @@ div.dt-buttons{
             // }
         ],
         ajax: {
-            url: '{{ url("admin/dosen-list-all") }}',
+            url: '{{ url("admin/master/fakultas/all") }}',
             beforeSend	: function(xhr){ 
                 xhr.setRequestHeader("X-CSRF-TOKEN", $('meta[name="csrf-token"]').attr('content'));
             },
@@ -58,24 +58,19 @@ div.dt-buttons{
                     return (meta.row+1);
                 }
             },
-			{ data: "dosen_name", name: "dosen_name"},
-			{ data: "email", name: "email"},
-			{ data: "dosen_jk_ret", name: "dosen_jk_ret"},
-			{ data: "dosen_telp", name: "dosen_telp"},
-            { data: "dosen_id", name: "dosen_id", orderable: false, 
+			{ data: "fakultas_name", name: "fakultas_name"},
+            { data: "fakultas_id", name: "fakultas_id", orderable: false, 
                 render: function(data, type, row, meta){
-                    var elShow = '<a class="btn btn-sm btn-default" href="javascript: editData(\''+row.dosen_id+'\');"><i class="fa fa-eye"></i></a>';
-					var elDelete = '<a class="btn btn-sm btn-default" href="javascript: deleteData(\''+row.dosen_id+'\', \''+row.dosen_name+'\');"><i class="fa fa-trash"></i></a>';
+                    var elShow = '<a class="btn btn-sm btn-default" href="javascript: editData(\''+row.fakultas_id+'\');"><i class="fa fa-eye"></i></a>';
                     return '<div class="btn-group">\
 							'+elShow+'\
-							'+elDelete+'\
 						</div>';
                 } 			
             },
         ],
         columnDefs: [
             {
-                targets: [1,2,3], 
+                targets: [1,2], 
                 className: 'text-center',
             }
         ],
@@ -91,42 +86,18 @@ div.dt-buttons{
         },			
     });
 
-	function deleteData(dosen_id, dosen_name){
-		conf = confirm("Apakah anda yakin akan menghapus Dosen "+dosen_name+" ?");
-		if( conf ){
-			postData = new Object();
-			postData.dosen_id = dosen_id;
-
-			ajax({
-				url : "{{ url('admin/dosen-delete') }}", 
-				postData : postData,
-				success : function(ret){
-					alert("Dosen "+dosen_name+" sudah berhasil dihapus");
-					table.draw();
-				},
-			});		
-		}
-	}
-
-    function editData(dosen_id){
+    function editData(fakultas_id){
         postData = new Object();
-		postData.dosen_id = dosen_id;
+		postData.fakultas_id = fakultas_id;
 		ajax({
-			url : "{{ url('admin/dosen-show') }}", 
+			url : "{{ url('admin/master/fakultas/show') }}", 
 			postData : postData,
 			success : function(ret){
 				$('#dlgData').modal('show');
 				$('#mode').val('edit');
 				var data = ret.data;
-				$('#dosen_id').val(data.dosen_id);
-                $('#dosen_name').val(data.dosen_name);
-				$('#dosen_jk').val(data.dosen_jk).trigger('change');
-                $('#dosen_telp').val(data.dosen_telp);
-				$('#email-class').addClass('hidden');
-				$('#email').attr("required", false);
-				$('#password-class').addClass("hidden");
-				$('#password').attr("required", false);
-
+				$('#fakultas_id').val(data.fakultas_id);
+                $('#fakultas_name').val(data.fakultas_name);
             }
 		});
     }
@@ -135,7 +106,7 @@ div.dt-buttons{
         table.draw();
     });
 
-	$('#btnAddDosen').click(function(e){
+	$('#btnAdd').click(function(e){
 		alertBox('hide', {selectorAlert: '#alertData'});
 		$('.modal-footer').removeAttr('style');
 		$('#token').val(token);
@@ -147,17 +118,13 @@ div.dt-buttons{
 
 	});
 
-	$('#dlgData').on('hidden.bs.modal', function () {
-		$(this).find('form').trigger('reset');
-	})
-
 	$('#frmData').submit(function(){
 		var formData = new FormData($('#frmData')[0]);
 		$.ajax({
 			type: 'POST',
 			headers: {'X-CSRF-TOKEN': csrfToken},
             data: formData,
-			url : "{{ url('admin/dosen-save') }}",
+			url : "{{ url('admin/master/fakultas/save') }}",
             contentType: false,
             processData: false,
             cache: false,
@@ -183,7 +150,7 @@ div.dt-buttons{
 	<div class="row col-md-12">
 		<div class="">
 			<div class="col-md-12">
-				<button id="btnAddDosen" class="btn btn-default">Tambah Data Dosen</button>
+				<button id="btnAdd" class="btn btn-default">Tambah Data Fakultas</button>
 			</div>
 		</div>
 		<br><br>
@@ -223,10 +190,7 @@ div.dt-buttons{
 			<thead>
 				<tr>
 					<th style="width: 20px">No</th>
-					<th style="width: ;">Nama Dosen</th>
-					<th style="width: ;">Email Dosen</th>
-                    <th style="width: ;">Jenis Kelamin</th>
-                    <th style="width: ;">No Telp</th>
+					<th style="width: ;">Nama Fakultas</th>
 					<th style="width: 80px;">Action</th>
 				</tr>
 			</thead>
@@ -241,53 +205,21 @@ div.dt-buttons{
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title">Tambah Data Dosen</h4>
+				<h4 class="modal-title">Tambah Data Fakultas</h4>
 			</div>
 			<form class="form-horizontal" id="frmData" onSubmit="return false" method="post" enctype="multipart/form-data" action="#">
 				<div class="modal-body">
 					<div id="alertData" style="display: none;"></div>
 					@csrf
 					<input type="text" name="mode" id="mode" value="add" required class="hidden">
-					<input type="text" name="dosen_id" id="dosen_id" class="hidden">
+					<input type="text" name="fakultas_id" id="fakultas_id" class="hidden">
 					<div class="form-group">
-                        <label class="col-sm-3 control-label" for="dosen_name">Nama Dosen</label>
+                        <label class="col-sm-3 control-label" for="fakultas_name">Nama Fakultas</label>
                         <div class="col-sm-9">
-							<input type="text" name="dosen_name" id="dosen_name" required class="form-control">
+							<input type="text" name="fakultas_name" id="fakultas_name" required class="form-control">
                         </div>
                     </div>
 
-					<div class="form-group" id="email-class">
-                        <label class="col-sm-3 control-label" for="email">Email</label>
-                        <div class="col-sm-9">
-							<input type="text" name="email" id="email" class="form-control" >
-                        </div>
-                    </div>
-
-					<div class="form-group">
-                        <label class="col-sm-3 control-label" for="dosen_jk">Jenis Kelamin</label>
-                        <div class="col-sm-9">
-							<select name="dosen_jk" id="dosen_jk" class="select2" required>
-                                <option value="" disabled selected hidden>Pilih Jenis Kelamin</option>
-									@foreach ($genders as $key => $gender)
-                                    	<option value="{{ $key }}"> {{ $gender }}</option>
-									@endforeach     
-                            </select>
-                        </div>
-                    </div>
-
-					<div class="form-group">
-                        <label class="col-sm-3 control-label" for="dosen_telp">No Telephone</label>
-                        <div class="col-sm-9">
-							<input type="text" name="dosen_telp" id="dosen_telp" required class="form-control">
-                        </div>
-                    </div>
-
-					<div class="form-group" id="password-class">
-                        <label class="col-sm-3 control-label" for="password">Pasword</label>
-                        <div class="col-sm-9">
-							<input type="password" name="password" id="password" class="form-control">
-                        </div>
-                    </div>
                 </div>
 				<div class="modal-footer">
 					<button type="submit" class="btn btn-default" >Save</button>

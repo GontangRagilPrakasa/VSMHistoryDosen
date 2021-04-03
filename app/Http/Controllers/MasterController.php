@@ -11,6 +11,8 @@ use App\Models\SysDosen;
 use App\Models\SysUsers;
 use App\Models\SysMahasiswa;
 use App\Models\OptGender;
+use App\Models\MstFakultas;
+use App\Models\MstProdi;
 
 class MasterController extends Controller
 {
@@ -175,8 +177,10 @@ class MasterController extends Controller
 
 
     public function adminMahasiswaList() {
-        $genders = OptGender::pluck('gender_name','gender_id')->toArray();
-        return view('admin.mahasiswa',compact('genders'));
+        $genders    = OptGender::pluck('gender_name','gender_id')->toArray();
+        $fakultas   = MstFakultas::pluck('fakultas_name','fakultas_id')->toArray();
+        $prodi      = MstProdi::pluck('prodi_name','prodi_id')->toArray();
+        return view('admin.mahasiswa',compact('genders','fakultas','prodi'));
     }
 
     public function adminMahasiswaSave(Request $input) {
@@ -227,6 +231,12 @@ class MasterController extends Controller
                 $mahasiswa->mahasiswa_name  = $request['mahasiswa_name'];
                 $mahasiswa->mahasiswa_jk    = $request['mahasiswa_jk'];
                 $mahasiswa->mahasiswa_telp  = $request['mahasiswa_telp'];
+                $mahasiswa->mahasiswa_npm           = $request['mahasiswa_npm'];
+                $mahasiswa->mahasiswa_tempat_lahir  = $request['mahasiswa_tempat_lahir'];
+                $mahasiswa->mahasiswa_tanggal_lahir = date('Y-m-d',strtotime($request['mahasiswa_tanggal_lahir']));
+                $mahasiswa->mahasiswa_fakultas      = $request['mahasiswa_fakultas'];
+                $mahasiswa->mahasiswa_prodi         = $request['mahasiswa_prodi'];
+
                 $mahasiswa->save();
             }
 
@@ -330,7 +340,5 @@ class MasterController extends Controller
 		}
         return \Response::json($ret,200);
     }
-
-
 
 }

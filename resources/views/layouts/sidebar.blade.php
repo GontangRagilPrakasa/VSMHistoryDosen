@@ -15,6 +15,24 @@
 		<!-- seller eks -->
 		@if(in_array(Auth::User()->role, [1]))
 
+            <li class="treeview {{ (Request::segment(2)=='master-instansi'?'active':'') }}">
+                <a href="#">
+                    <i class="fa fa-archive"></i> <span>Master Instansi</span>
+                    <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                </a>
+                <ul class="treeview-menu">
+                    <li class="{{ (Request::segment(3)=='fakultas'?'active':'') }}">
+                        <a href="{{ url('admin/master/fakultas/') }}">
+                            <i class="fa fa-circle-o"></i> <span>Fakultas</span>
+                        </a>
+                    </li>
+                    <li class="{{ (Request::segment(3)=='prodi'?'active':'') }}">
+                        <a href="{{ url('admin/master/prodi/') }}">
+                            <i class="fa fa-circle-o"></i> <span>Program Studi</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
             <li class="{{ ($controller=='MasterController'?'active':'') }}">
                 <a href="{{ url('admin/dosen-list') }}">
@@ -25,6 +43,12 @@
             <li class="{{ ($controller=='MasterController'?'active':'') }}">
                 <a href="{{ url('admin/mahasiswa-list') }}">
                     <i class="fa fa-user"></i> <span>Master Mahasiswa</span>
+                </a>
+            </li>
+
+            <li class="{{ ($controller=='MasterSkripsi'?'active':'') }}">
+                <a href="{{ url('admin/master/skripsi') }}">
+                    <i class="fa fa-user"></i> <span>Master Skripsi</span>
                 </a>
             </li>
 		@endif

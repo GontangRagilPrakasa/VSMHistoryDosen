@@ -126,7 +126,14 @@ div.dt-buttons{
 				$('#email').attr("required", false);
 				$('#password-class').addClass("hidden");
 				$('#password').attr("required", false);
+				$('#mahasiswa_npm').val(data.mahasiswa_npm);
+				$('#mahasiswa_tempat_lahir').val(data.mahasiswa_tempat_lahir);
+				$('#mahasiswa_tanggal_lahir').val(data.mahasiswa_tanggal_lahir);
+				$('#mahasiswa_fakultas').val(data.mahasiswa_fakultas).trigger('change');
+				$('#mahasiswa_prodi').val(data.mahasiswa_prodi).trigger('change');
 
+				fakultas_id = data.mahasiswa_fakultas;
+				prodi_id = data.mahasiswa_prodi;
             }
 		});
     }
@@ -135,7 +142,7 @@ div.dt-buttons{
         table.draw();
     });
 
-	$('#btnAddDosen').click(function(e){
+	$('#btnAdd').click(function(e){
 		alertBox('hide', {selectorAlert: '#alertData'});
 		$('.modal-footer').removeAttr('style');
 		$('#token').val(token);
@@ -144,8 +151,15 @@ div.dt-buttons{
 		$('#email').attr("required", true);
 		$('#password-class').removeClass("hidden");
 		$('#password').attr("required", true);
+		mode = 'add';
+		$('#mahasiswa_prodi').prop('disabled', true);
 
 	});
+
+	$('#dlgData').on('hidden.bs.modal', function () {
+		$(this).find('form').trigger('reset');
+
+	})
 
 	$('#frmData').submit(function(){
 		var formData = new FormData($('#frmData')[0]);
@@ -171,6 +185,36 @@ div.dt-buttons{
 		});
 	});
 
+	$('#mahasiswa_fakultas').change(function(){
+		var id = $('#mahasiswa_fakultas').val();
+		if (id) {
+			$.ajax({
+				url : '{{ url( 'json/prodi/' ) }}/'+id,
+				type: 'GET',
+				success: function( result )
+				{
+					$('#mahasiswa_prodi').prop('disabled', false);
+					
+					$("#mahasiswa_prodi").prop("selectedIndex", 0);
+					$('#mahasiswa_prodi').find('option').remove().end().append('<option value=""> Pilih Program Studi </option>');
+					$.each( result, function(k, v) {
+						console.log(k,v);
+						$('#mahasiswa_prodi').append($('<option>', {value:k, text:v}));
+					});
+					if (fakultas_id == id && prodi_id && $('#mode').val() == 'edit') {
+						$('#mahasiswa_prodi').val(prodi_id).trigger('change');	
+					}
+				}
+			});
+		} else {
+			
+			$('#mahasiswa_prodi').prop('disabled', true);
+			
+			$("#mahasiswa_prodi").prop("selectedIndex", 0);
+		}
+			
+	});
+
 </script>
 @endsection
 
@@ -179,7 +223,7 @@ div.dt-buttons{
 	<div class="row col-md-12">
 		<div class="">
 			<div class="col-md-12">
-				<button id="btnAddDosen" class="btn btn-default">Tambah Data Mahasiswa</button>
+				<button id="btnAdd" class="btn btn-default">Tambah Data Mahasiswa</button>
 			</div>
 		</div>
 		<br><br>
@@ -252,12 +296,33 @@ div.dt-buttons{
                         </div>
                     </div>
 
+					<div class="form-group">
+						<label class="col-sm-3 control-label" for="nama_bumdes">NPM Mahasiswa </label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="mahasiswa_npm" name="mahasiswa_npm" required="">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label" for="nama_bumdes">Tempat Lahir Mahasiswa </label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="mahasiswa_tempat_lahir" name="mahasiswa_tempat_lahir" required="" >
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label" for="nama_bumdes">Tangal Lahir Mahasiswa </label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control datepicker" id="mahasiswa_tanggal_lahir" name="mahasiswa_tanggal_lahir" required="" >
+						</div>
+					</div>
+
 					<div class="form-group" id="email-class">
                         <label class="col-sm-3 control-label" for="email">Email</label>
                         <div class="col-sm-9">
 							<input type="text" name="email" id="email" class="form-control" >
                         </div>
-                    </div>
+                    </div>				
 
 					<div class="form-group">
                         <label class="col-sm-3 control-label" for="mahasiswa_jk">Jenis Kelamin</label>
@@ -278,11 +343,36 @@ div.dt-buttons{
                         </div>
                     </div>
 
+					<div class="form-group">
+						<label class="col-sm-3 control-label" for="nama_bumdes">Fakultas </label>
+						<div class="col-sm-9">
+							<select name="mahasiswa_fakultas" id="mahasiswa_fakultas" class="select2" required>
+								<option value="" disabled selected hidden>Pilih Fakultas</option>
+									@foreach ($fakultas as $key => $fak)
+										<option value="{{ $key }}"> {{ $fak }}</option>
+									@endforeach     
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="col-sm-3 control-label" for="nama_bumdes">Program Studi </label>
+						<div class="col-sm-9">
+							<select name="mahasiswa_prodi" id="mahasiswa_prodi" class="select2" required>
+								<option value="" disabled selected hidden>Pilih Program Studi</option>
+									@foreach ($prodi as $key => $prod)
+										<option value="{{ $key }}"> {{ $prod }}</option>
+									@endforeach     
+							</select>
+						</div>
+					</div>	
+
 					<div class="form-group" id="password-class">
                         <label class="col-sm-3 control-label" for="password">Pasword</label>
                         <div class="col-sm-9">
 							<input type="password" name="password" id="password" class="form-control">
                         </div>
+						
                     </div>
                 </div>
 				<div class="modal-footer">

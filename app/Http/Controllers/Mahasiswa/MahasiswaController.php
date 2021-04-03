@@ -12,7 +12,9 @@ use App\Models\SysMahasiswa;
 use App\Models\MstDosenPengampu;
 use App\Models\OptGender;
 use App\Models\SysUsers;
-use App\Repositories\IndexDesaRepostiory;
+use App\Models\MstFakultas;
+use App\Models\MstProdi;
+use App\Models\MstSkripsiLog;
 use Session;
 
 class MahasiswaController extends Controller
@@ -23,30 +25,42 @@ class MahasiswaController extends Controller
         $master_mahasiswa = SysMahasiswa::select([
             'sys_mahasiswa.*',
             'opt_gender.gender_name',
-            'mst_dosen_mengampu.approval'
         ])
         ->where('users_id', Auth::user()->user_id)
         ->join('opt_gender','opt_gender.gender_id','sys_mahasiswa.mahasiswa_jk')
-        ->leftJoin('mst_dosen_mengampu','mst_dosen_mengampu.mahasiswa_id','sys_mahasiswa.mahasiswa_id')
         ->first();
+        $fakultas   = MstFakultas::pluck('fakultas_name','fakultas_id')->toArray();
+        $prodi      = MstProdi::pluck('prodi_name','prodi_id')->toArray();
 
         return view('mahasiswa.profil')->with([
             'master_mahasiswa'  => $master_mahasiswa,
-            'opt_jk'            => $opt_jk
+            'opt_jk'            => $opt_jk,
+            'fakultas'          => $fakultas,
+            'prodi'             => $prodi
         ]);
     }
 
     public function profilSave(Request $request)
     {
         $element_checks = [
-			'mahasiswa_name'    => 'required|string',
-            'mahasiswa_telp'    => 'required|string',
-            'mahasiswa_jk'      => 'required|integer',
+			'mahasiswa_name'            => 'required|string',
+            'mahasiswa_telp'            => 'required|string',
+            'mahasiswa_jk'              => 'required|integer',
+            'mahasiswa_npm'             => 'required|string',
+            'mahasiswa_tempat_lahir'    => 'required|string',
+            'mahasiswa_tanggal_lahir'   => 'required|string',
+            'mahasiswa_fakultas'        => 'required|integer|min:1',
+            'mahasiswa_prodi'           => 'required|integer|min:1',
         ];
         $element_attributes = [
-			'mahasiswa_name'    => '"Nama Mahasiswa"',
-            'mahasiswa_telp'    => '"Telephone Mahasiswa"',
-            'mahasiswa_jk'      => '"Jenis Kelamin Mahasiswa"',
+			'mahasiswa_name'            => '"Nama Mahasiswa"',
+            'mahasiswa_telp'            => '"Telephone Mahasiswa"',
+            'mahasiswa_jk'              => '"Jenis Kelamin Mahasiswa"',
+            'mahasiswa_npm'             => 'NPM Mahasiswa',
+            'mahasiswa_tempat_lahir'    => 'Tempat Lahir Mahasiswa',
+            'mahasiswa_tanggal_lahir'   => 'Tanggal Lahir Mahasiswa',
+            'mahasiswa_fakultas'        => 'Fakultas Mahasiswa',
+            'mahasiswa_prodi'           => 'Program Studi Mahasiswa',
 		];
 
         $validator = Validator::make($request->all(), $element_checks)->setAttributeNames($element_attributes);
@@ -76,7 +90,12 @@ class MahasiswaController extends Controller
                 $master_mahasiswa->mahasiswa_name               = $request['mahasiswa_name'];
                 $master_mahasiswa->mahasiswa_telp               = $request['mahasiswa_telp'];
                 $master_mahasiswa->mahasiswa_jk                 = $request['mahasiswa_jk'];
-                $master_mahasiswa->mahasiswa_judul_skripsi      = $request['mahasiswa_judul_skripsi'];
+                $master_mahasiswa->mahasiswa_npm                = $request['mahasiswa_npm'];
+                $master_mahasiswa->mahasiswa_tempat_lahir       = $request['mahasiswa_tempat_lahir'];
+                $master_mahasiswa->mahasiswa_tanggal_lahir      = date('Y-m-d', strtotime($request['mahasiswa_tanggal_lahir']));
+                $master_mahasiswa->mahasiswa_fakultas           = $request['mahasiswa_fakultas'];
+                $master_mahasiswa->mahasiswa_prodi              = $request['mahasiswa_prodi'];
+
             }
             
 
@@ -107,39 +126,10 @@ class MahasiswaController extends Controller
 
     public function skripsiForm()
     {
-        $data_mahasiswa = SysMahasiswa::select(['mahasiswa_judul_skripsi', 'mahasiswa_id'])
-        ->join('sys_users','sys_users.user_id','sys_mahasiswa.users_id')->where('sys_users.user_id', Auth::user()->user_id)->first();
+        $skripsi = SysMahasiswa::join('sys_users','sys_users.user_id','sys_mahasiswa.users_id')->where('sys_users.user_id', Auth::user()->user_id)
+        ->join('mst_dosen_mengampu','mst_dosen_mengampu.mahasiswa_id','sys_mahasiswa.mahasiswa_id')->first()->approval;
 
-        $option_dosen_rekomendasi = array();
-        $dosen_judul_id = array();
-        if (!is_null($data_mahasiswa)) {
-            $status_skripsi = MstDosenPengampu::select(['approval'])->where('mahasiswa_id',$data_mahasiswa['mahasiswa_id'])->first();
-            
-            if (is_null($status_skripsi)) {
-                $query =  str_replace(" ", "%20", $data_mahasiswa['mahasiswa_judul_skripsi']);
-                $json=file_get_contents("http://localhost:5000/search?q=$query");
-                $data = json_decode($json, true);
-                
-                if(empty($data)) {
-                    $option_dosen_rekomendasi[] = [];
-                } else if(is_null($data_mahasiswa['mahasiswa_judul_skripsi'])) {
-                    $option_dosen_rekomendasi[] = [];
-                } else {
-                    foreach ($data[0]['details'] as $key => $value) {
-                        $option_dosen_rekomendasi[] =  [
-                            'id'                => $value['dosen_id'],
-                            'dosen'             => $value['dosen'] . " (". $value['judul'] ." [ ". $value['score']  ." ] )",
-                        ];
-                    }
-                }                
-            }
-        }
-
-        return view('mahasiswa.list-form-skripsi')->with([
-            'option_dosen_rekomendasi'      => $option_dosen_rekomendasi,
-            'status_skripsi'                => $status_skripsi['approval'],
-            'judul'                         => $data_mahasiswa['mahasiswa_judul_skripsi']
-        ]);
+        return view('mahasiswa.list-form-skripsi',compact('skripsi'));
     }
 
     public function listskripsiForm(Request $input)
@@ -153,17 +143,22 @@ class MahasiswaController extends Controller
 
         $data_mahasiswa = SysMahasiswa::select('mahasiswa_id')->join('sys_users','sys_users.user_id','sys_mahasiswa.users_id')->where('sys_users.user_id', Auth::user()->user_id)->first();
 
-        $query = MstDosenPengampu::select([
+        $query = MstSkripsiLog::select([
             'mst_dosen_mengampu.id as dosen_id_mengampu',
             'mst_dosen_mengampu.start_mengampu',
             'mst_dosen_mengampu.selesai_mengampu',
-            'mst_dosen_mengampu.created_at',
-            DB::raw("(CASE WHEN mst_dosen_mengampu.approval=0 THEN 'Belum DiSetujui' WHEN mst_dosen_mengampu.approval=1 THEN 'DiSetujui' WHEN mst_dosen_mengampu.approval=2 THEN 'Pengajuan Pembatalan' END) as approval"),
+            'mst_skripsi_log.created_at',
+            DB::raw("(CASE WHEN mst_skripsi_log.status_skripsi=0 THEN 'Tahap Pengajuan' WHEN mst_skripsi_log.status_skripsi=1 THEN 'DiSetujui' WHEN mst_skripsi_log.status_skripsi=2 THEN 'Pengajuan Pembatalan' WHEN status_skripsi=3 THEN 'Pembatalan Skripsi' END) as approval"),
             'mst_dosen_mengampu.approval as approval_status',
-            'sys_dosen.dosen_name'
+            DB::raw('IFNULL(sys_dosen.dosen_name, "Belum Mendapatkan Dosen") as dosen_name'),
+            DB::raw('IFNULL(dosen2.dosen_name, "Belum Mendapatkan Dosen") as dosen_name_2'),
+            'mst_skripsi_log.skripsi_log_id'
         ])
-        ->leftJoin('sys_dosen','sys_dosen.dosen_id','mst_dosen_mengampu.dosen_id')
-        ->where('mst_dosen_mengampu.mahasiswa_id',$data_mahasiswa['mahasiswa_id']);
+        ->join('mst_dosen_mengampu','mst_dosen_mengampu.mahasiswa_id','mst_skripsi_log.mahasiswa_id')
+        ->leftJoin('sys_dosen','sys_dosen.dosen_id','mst_skripsi_log.dosen_id_log')
+        ->leftJoin('sys_dosen as dosen2','dosen2.dosen_id','mst_skripsi_log.dosen_id_log_2')
+        ->where('mst_dosen_mengampu.mahasiswa_id',$data_mahasiswa['mahasiswa_id'])
+        ->orderBy('mst_skripsi_log.created_at','desc');
 
         $keyword = $request["keyword"];
         if( $keyword<> "" ){
@@ -180,62 +175,63 @@ class MahasiswaController extends Controller
         return \Response::json($ret,200);
     }
 
-    public function pengajuanSkripsi(Request $request)
+    public function skripsiFormLog($skripsi_log_id)
     {
-        $ret = (object) [];
-        $ret->status = 200;
-        $ret->result = true;
-        $ret->msg = "";
-
-        $input = $request->all();
-
-        $data_mahasiswa = SysMahasiswa::select('mahasiswa_id')->join('sys_users','sys_users.user_id','sys_mahasiswa.users_id')->where('sys_users.user_id', Auth::user()->user_id)->first();
-        
-        $rekomendasi_dosen = new MstDosenPengampu();
-        $rekomendasi_dosen->dosen_id = $input['rekomendasi_dosen'];
-        $rekomendasi_dosen->mahasiswa_id = $data_mahasiswa['mahasiswa_id'];
-    
-        if ($rekomendasi_dosen->save()) {
-            $ret->status = 200;
-            $ret->result = true;
-            $ret->msg = "Berhasil menyimpan data";
-            DB::commit();
-
-        } else {
-            DB::rollback();
-
-            $ret->status = 400;
-            $ret->result = false;
-            $ret->msg = "Gagal menyimpan data";
-        }
-
-        return \Response::json($ret, 200);
+        $data = MstSkripsiLog::find($skripsi_log_id)->skripsi_log;
+        return view('mahasiswa.list-log-skripsi',compact('data'));
     }
 
-    public function pengajuanBatalskripsi(Request $request)
+    public function pengajuanSkripsi(Request $request)
     {
-        $ret = (object) [];
-        $ret->status = 200;
-        $ret->result = true;
-        $ret->msg = "";
+        try{
+            $ret = (object) [];
+            $ret->status = 200;
+            $ret->result = true;
+            $ret->msg = "";
 
-        $input = $request->all();
-        $changeStatus = MstDosenPengampu::where('id',$input['data'])->update([
-            'approval'      => 2 //Status Dibatalkan
-        ]);
+            $input = $request->all();
 
-        if ($changeStatus) {
+            $data_mahasiswa = SysMahasiswa::select('mahasiswa_id')->join('sys_users','sys_users.user_id','sys_mahasiswa.users_id')->where('sys_users.user_id', Auth::user()->user_id)->first();
+
+            $data_mahasiswa->mahasiswa_judul_skripsi = $input['mahasiswa_judul_skripsi'];
+            $data_mahasiswa->save();
+
+            $rekomendasi_dosen = MstDosenPengampu::where('mahasiswa_id',$data_mahasiswa['mahasiswa_id'])->first();
+
+            if(is_null($rekomendasi_dosen)) {
+                $rekomendasi_dosen = new MstDosenPengampu();
+            }
+
+            $rekomendasi_dosen->mahasiswa_id = $data_mahasiswa['mahasiswa_id'];
+            $rekomendasi_dosen->approval = 0;
+            $rekomendasi_dosen->save();
+
+            $skripsi_detail = array(
+                'status'            => 'Pengajuan Skripsi',
+                'dari'              => 'Mahasiswa',
+                'Judul Skripsi'     => $input['mahasiswa_judul_skripsi']    
+            );
+            $serialize = serialize($skripsi_detail);
+
+            $skripsi_log = new MstSkripsiLog();
+            $skripsi_log->mahasiswa_id              = $data_mahasiswa['mahasiswa_id'];
+            $skripsi_log->mahasiswa_skripsi_name    = $input['mahasiswa_judul_skripsi'];
+            $skripsi_log->status_skripsi            = 0; // default pengajuan
+            $skripsi_log->skripsi_log               = $serialize;
+            $skripsi_log->save();
+            
+            
             $ret->status = 200;
             $ret->result = true;
             $ret->msg = "Berhasil menyimpan data";
             DB::commit();
 
-        } else {
+        } catch(QueryException $e){
             DB::rollback();
 
             $ret->status = 400;
             $ret->result = false;
-            $ret->msg = "Gagal menyimpan data";
+            $ret->msg = $e->getMessage();
         }
 
         return \Response::json($ret, 200);
