@@ -316,7 +316,7 @@ class MasterController extends Controller
         try{
             $mahasiswa_id = $request['mahasiswa_id'];
 			$mahasiswa = SysMahasiswa::where('mahasiswa_id',$mahasiswa_id)
-            ->join('sys_users','sys_users.user_id','sys_mahasiswa.mahasiswa_id')
+            ->join('sys_users','sys_users.user_id','sys_mahasiswa.users_id')
             ->first();
 
 			if( $mahasiswa ){
